@@ -44,4 +44,13 @@ export interface Page<T> {
   empty: boolean;
 }
 
+export interface PlayerStandingsResponse {
+  playerId: number;
+  playerName: string;
+  totalMatches: number;
+  matchesWon: number;
+  matchesLost: number;
+  winRate: string;
+}
+
 export const API_BASE_URL = 'http://localhost:8083';

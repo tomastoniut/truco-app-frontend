@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
 import './Dashboard.css';
-import { type Torneo, type Match, type Player, type Page, API_BASE_URL } from '../types';
+import { type Torneo, type Match, type Player, type Page, type PlayerStandingsResponse, API_BASE_URL } from '../types';
 import Header from '../components/Header';
 import ModalCreateTorneo from '../components/ModalCreateTorneo';
 import ModalCreateJugador from '../components/ModalCreateJugador';
 import ModalAddPartido from '../components/ModalAddPartido';
 import ModalPartidos from '../components/ModalPartidos';
 import ModalScoreMatch from '../components/ModalScoreMatch';
+import ModalEstadisticas from '../components/ModalEstadisticas';
 import TorneoCard from '../components/TorneoCard';
 
 const Dashboard = () => {
@@ -24,6 +25,8 @@ const Dashboard = () => {
   const [localScore, setLocalScore] = useState(0);
   const [visitorScore, setVisitorScore] = useState(0);
   const [showAddPartido, setShowAddPartido] = useState<number | null>(null);
+  const [showEstadisticas, setShowEstadisticas] = useState<number | null>(null);
+  const [estadisticas, setEstadisticas] = useState<PlayerStandingsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
   // Form states
@@ -87,7 +90,7 @@ const Dashboard = () => {
     tournamentId?: number, 
     page: number = 0, 
     size: number = 10,
-    sortBy: string = 'date',
+    sortBy: string = 'match',
     sortDirection: string = 'DESC'
   ) => {
     try {
@@ -256,12 +259,20 @@ const Dashboard = () => {
         });
 
         if (response.ok) {
+          const newMatch = await response.json();
           await fetchTorneos();
+          
+          // Limpiar el formulario
           const today = new Date();
           setNuevoPartidoDate(today.toISOString().split('T')[0]);
           setNuevoPartidoJugadoresA([]);
           setNuevoPartidoJugadoresB([]);
           setShowAddPartido(null);
+          
+          // Abrir automáticamente el modal de score para el partido recién creado
+          setSelectedMatch(newMatch);
+          setLocalScore(newMatch.scoreLocalTeam ?? 0);
+          setVisitorScore(newMatch.scoreVisitorTeam ?? 0);
         } else {
           console.error('Error al crear partido');
         }
@@ -288,6 +299,27 @@ const Dashboard = () => {
   const handlePageChange = async (newPage: number, tournamentId?: number) => {
     setCurrentPage(newPage);
     await fetchAllMatches(undefined, tournamentId, newPage);
+  };
+
+  const fetchEstadisticas = async (torneoId: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/tournaments/${torneoId}/standings`);
+      if (response.ok) {
+        const data: PlayerStandingsResponse[] = await response.json();
+        setEstadisticas(data);
+      } else {
+        console.error('Error al cargar estadísticas');
+        setEstadisticas([]);
+      }
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+      setEstadisticas([]);
+    }
+  };
+
+  const handleEstadisticasClick = async (torneoId: number) => {
+    await fetchEstadisticas(torneoId);
+    setShowEstadisticas(torneoId);
   };
 
   return (
@@ -371,6 +403,14 @@ const Dashboard = () => {
             onFaltaEnvido={handleFaltaEnvido}
           />
 
+          <ModalEstadisticas
+            isOpen={showEstadisticas !== null}
+            torneoId={showEstadisticas}
+            torneoName={torneos.find(t => t.id === showEstadisticas)?.name || ''}
+            onClose={() => setShowEstadisticas(null)}
+            estadisticas={estadisticas}
+          />
+
           {/* Lista de Torneos */}
           <div className="torneos-grid">
             {torneos.length === 0 ? (
@@ -388,6 +428,7 @@ const Dashboard = () => {
                   torneo={torneo}
                   onAddPartido={setShowAddPartido}
                   onTorneoClick={handleTorneoClick}
+                  onEstadisticasClick={handleEstadisticasClick}
                 />
               ))
             )}

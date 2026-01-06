@@ -1869,3 +1869,339 @@
   opacity: 0.6;
   box-shadow: none;
 }
+
+/* Estadísticas */
+.estadisticas-container {
+  padding: 1.5rem;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+}
+
+.estadisticas-table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.estadisticas-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.estadisticas-table thead {
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.estadisticas-table th {
+  padding: 1.25rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.estadisticas-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.estadisticas-table tbody tr:hover {
+  background-color: #f0f9ff;
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.estadisticas-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.estadisticas-table td {
+  padding: 1.25rem 1rem;
+  font-size: 0.95rem;
+  color: #1f2937;
+  border-left: 3px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.position-cell {
+  font-weight: 600;
+  width: 80px;
+}
+
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+.estadisticas-table tbody tr:hover .position-badge {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.position-badge.top-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+  border: 2px solid #fff;
+}
+
+.position-badge.top-2 {
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 100%);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.5);
+  border: 2px solid #fff;
+}
+
+.position-badge.top-3 {
+  background: linear-gradient(135deg, #e8a572 0%, #cd7f32 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.5);
+  border: 2px solid #fff;
+}
+
+.player-name-cell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.wins-cell {
+  color: #10b981;
+  font-weight: 700;
+  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.08));
+  border-radius: 6px;
+}
+
+.losses-cell {
+  color: #ef4444;
+  font-weight: 700;
+  background: linear-gradient(to right, transparent, rgba(239, 68, 68, 0.08));
+  border-radius: 6px;
+}
+
+.winrate-cell {
+  font-weight: 800;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.estadisticas-table tbody tr.top-1 {
+  background: linear-gradient(to right, #fffbeb 0%, #ffffff 100%);
+}
+
+.estadisticas-table tbody tr.top-1 td:first-child {
+  border-left: 4px solid #ffd700;
+}
+
+.estadisticas-table tbody tr.top-2 {
+  background: linear-gradient(to right, #f8f9fa 0%, #ffffff 100%);
+}
+
+.estadisticas-table tbody tr.top-2 td:first-child {
+  border-left: 4px solid #c0c0c0;
+}
+
+.estadisticas-table tbody tr.top-3 {
+  background: linear-gradient(to right, #fff5ed 0%, #ffffff 100%);
+}
+
+.estadisticas-table tbody tr.top-3 td:first-child {
+  border-left: 4px solid #cd7f32;
+}
+
+.btn-estadisticas {
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+}
+
+.btn-estadisticas svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-estadisticas:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.torneo-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Estadísticas con PrimeReact */
+.estadisticas-container-prime {
+  padding: 1.5rem;
+}
+
+.estadisticas-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Header personalizado con colores de la app */
+.estadisticas-datatable .p-datatable-thead > tr > th {
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 1rem !important;
+  border: none !important;
+}
+
+/* Filas */
+.estadisticas-datatable .p-datatable-tbody > tr {
+  transition: all 0.3s ease;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f0f9ff !important;
+  transform: scale(1.005);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem !important;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Badges de posición */
+.position-badge-prime {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 10px rgba(59, 130, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr:hover .position-badge-prime {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.position-badge-prime.top-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+  border: 2px solid #fff;
+}
+
+.position-badge-prime.top-2 {
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 100%);
+  color: #1f2937;
+  box-shadow: 0 4px 12px rgba(192, 192, 192, 0.5);
+  border: 2px solid #fff;
+}
+
+.position-badge-prime.top-3 {
+  background: linear-gradient(135deg, #e8a572 0%, #cd7f32 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(205, 127, 50, 0.5);
+  border: 2px solid #fff;
+}
+
+/* Filas del top 3 */
+.estadisticas-datatable .top-1-row {
+  background: linear-gradient(to right, #fffbeb 0%, #ffffff 100%) !important;
+  border-left: 4px solid #ffd700 !important;
+}
+
+.estadisticas-datatable .top-2-row {
+  background: linear-gradient(to right, #f8f9fa 0%, #ffffff 100%) !important;
+  border-left: 4px solid #c0c0c0 !important;
+}
+
+.estadisticas-datatable .top-3-row {
+  background: linear-gradient(to right, #fff5ed 0%, #ffffff 100%) !important;
+  border-left: 4px solid #cd7f32 !important;
+}
+
+/* Nombre del jugador */
+.player-name-prime {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Ganados en verde */
+.wins-cell-prime {
+  color: #10b981;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.1));
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Perdidos en rojo */
+.losses-cell-prime {
+  color: #ef4444;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(to right, transparent, rgba(239, 68, 68, 0.1));
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Porcentaje con gradiente */
+.winrate-cell-prime {
+  font-weight: 800;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+/* Eliminar bordes de PrimeReact */
+.estadisticas-datatable .p-datatable-table {
+  border: none !important;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none !important;
+}
