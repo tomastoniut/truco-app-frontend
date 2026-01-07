@@ -225,7 +225,7 @@ const Dashboard = () => {
           const newPlayer = await response.json();
           setPlayers([...players, newPlayer]);
           setNuevoJugadorNombre('');
-          setShowCreateJugador(false);
+          // No cerramos el modal para permitir agregar más jugadores
         } else {
           console.error('Error al crear jugador');
         }
@@ -322,6 +322,29 @@ const Dashboard = () => {
     setShowEstadisticas(torneoId);
   };
 
+  const handleCancelarPartido = async (matchId: number) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/matches/${matchId}/cancel`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Actualizar la lista de partidos
+        await fetchAllMatches();
+        await fetchTorneos();
+        // Cerrar el modal si está abierto
+        setSelectedMatch(null);
+      } else {
+        console.error('Error al cancelar partido');
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <main className="main-content-full">
@@ -401,6 +424,7 @@ const Dashboard = () => {
             onClose={() => setSelectedMatch(null)}
             onUpdateScore={handleUpdateScore}
             onFaltaEnvido={handleFaltaEnvido}
+            onCancelarPartido={handleCancelarPartido}
           />
 
           <ModalEstadisticas

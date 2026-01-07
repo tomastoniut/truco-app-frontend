@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { type Match } from '../types';
+import ConfirmDialog from './ConfirmDialog';
 
 interface ModalScoreMatchProps {
   isOpen: boolean;
@@ -8,6 +10,7 @@ interface ModalScoreMatchProps {
   onClose: () => void;
   onUpdateScore: (isLocal: boolean, amount: number) => void;
   onFaltaEnvido: (isLocal: boolean) => void;
+  onCancelarPartido: (matchId: number) => void;
 }
 
 const ModalScoreMatch = ({
@@ -17,8 +20,12 @@ const ModalScoreMatch = ({
   visitorScore,
   onClose,
   onUpdateScore,
-  onFaltaEnvido
+  onFaltaEnvido,
+  onCancelarPartido
 }: ModalScoreMatchProps) => {
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const isMatchCanceled = match?.stateId === 4;
+
   if (!isOpen || !match) return null;
 
   return (
@@ -64,28 +71,28 @@ const ModalScoreMatch = ({
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 1)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +1
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 2)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +2
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 3)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +3
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 4)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +4
                   </button>
@@ -94,28 +101,28 @@ const ModalScoreMatch = ({
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 5)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +5
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 6)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +6
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(true, 7)}
-                    disabled={localScore >= 30}
+                    disabled={isMatchCanceled || localScore >= 30}
                   >
                     +7
                   </button>
                   <button 
                     className="score-btn decrement"
                     onClick={() => onUpdateScore(true, -1)}
-                    disabled={localScore === 0}
+                    disabled={isMatchCanceled || localScore === 0}
                   >
                     -1
                   </button>
@@ -123,7 +130,7 @@ const ModalScoreMatch = ({
                 <button 
                   className="score-btn falta-envido"
                   onClick={() => onFaltaEnvido(true)}
-                  disabled={localScore >= 30}
+                  disabled={isMatchCanceled || localScore >= 30}
                 >
                   Falta Envido
                 </button>
@@ -148,28 +155,28 @@ const ModalScoreMatch = ({
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 1)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +1
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 2)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +2
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 3)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +3
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 4)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +4
                   </button>
@@ -178,28 +185,28 @@ const ModalScoreMatch = ({
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 5)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +5
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 6)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +6
                   </button>
                   <button 
                     className="score-btn increment"
                     onClick={() => onUpdateScore(false, 7)}
-                    disabled={visitorScore >= 30}
+                    disabled={isMatchCanceled || visitorScore >= 30}
                   >
                     +7
                   </button>
                   <button 
                     className="score-btn decrement"
                     onClick={() => onUpdateScore(false, -1)}
-                    disabled={visitorScore === 0}
+                    disabled={isMatchCanceled || visitorScore === 0}
                   >
                     -1
                   </button>
@@ -207,7 +214,7 @@ const ModalScoreMatch = ({
                 <button 
                   className="score-btn falta-envido"
                   onClick={() => onFaltaEnvido(false)}
-                  disabled={visitorScore >= 30}
+                  disabled={isMatchCanceled || visitorScore >= 30}
                 >
                   Falta Envido
                 </button>
@@ -217,7 +224,13 @@ const ModalScoreMatch = ({
 
           {/* Info del juego */}
           <div className="game-info">
-            <p className="game-rule">🎴 Truco Argentino - El primer equipo en llegar a 30 puntos gana</p>
+            {isMatchCanceled ? (
+              <div className="canceled-announcement">
+                ❌ Este partido ha sido cancelado y no se puede modificar
+              </div>
+            ) : (
+              <p className="game-rule">🎴 Truco Argentino - El primer equipo en llegar a 30 puntos gana</p>
+            )}
             {match.winnerTeamName && (
               <div className="winner-announcement">
                 🏆 ¡Ganador: {match.winnerTeamName}!
@@ -225,8 +238,32 @@ const ModalScoreMatch = ({
             )}
           </div>
 
+          {/* Botón para cancelar partido */}
+          {(match.stateId === 1 || match.stateId === 2) && (
+            <div className="cancel-match-section">
+              <button 
+                className="btn-cancel-match"
+                onClick={() => setShowConfirmDialog(true)}
+              >
+                ❌ Cancelar Partido
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* Diálogo de confirmación */}
+      <ConfirmDialog
+        isOpen={showConfirmDialog}
+        title="Cancelar Partido"
+        message="¿Estás seguro de que deseas cancelar este partido? Esta acción no se puede deshacer."
+        confirmText="Sí, cancelar"
+        cancelText="No, volver"
+        type="danger"
+        onConfirm={() => onCancelarPartido(match.id)}
+        onCancel={() => setShowConfirmDialog(false)}
+      />
     </div>
   );
 };
