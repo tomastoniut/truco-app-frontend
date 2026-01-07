@@ -28,6 +28,7 @@ const Dashboard = () => {
   const [showEstadisticas, setShowEstadisticas] = useState<number | null>(null);
   const [estadisticas, setEstadisticas] = useState<PlayerStandingsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   
   // Form states
   const [nuevoTorneoNombre, setNuevoTorneoNombre] = useState('');
@@ -211,23 +212,46 @@ const Dashboard = () => {
     if (nuevoJugadorNombre) {
       setIsLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/players`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: nuevoJugadorNombre
-          }),
-        });
+        if (editingPlayer) {
+          // Editar jugador existente
+          const response = await fetch(`${API_BASE_URL}/api/players/${editingPlayer.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: nuevoJugadorNombre
+            }),
+          });
 
-        if (response.ok) {
-          const newPlayer = await response.json();
-          setPlayers([...players, newPlayer]);
-          setNuevoJugadorNombre('');
-          // No cerramos el modal para permitir agregar más jugadores
+          if (response.ok) {
+            const updatedPlayer = await response.json();
+            setPlayers(players.map(p => p.id === updatedPlayer.id ? updatedPlayer : p));
+            setNuevoJugadorNombre('');
+            setEditingPlayer(null);
+          } else {
+            console.error('Error al editar jugador');
+          }
         } else {
-          console.error('Error al crear jugador');
+          // Crear nuevo jugador
+          const response = await fetch(`${API_BASE_URL}/api/players`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: nuevoJugadorNombre
+            }),
+          });
+
+          if (response.ok) {
+            const newPlayer = await response.json();
+            setPlayers([...players, newPlayer]);
+            setNuevoJugadorNombre('');
+            // No cerramos el modal para permitir agregar más jugadores
+          } else {
+            console.error('Error al crear jugador');
+          }
         }
       } catch (error) {
         console.error('Error de conexión:', error);
@@ -235,6 +259,16 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     }
+  };
+
+  const handleEditPlayer = (player: Player) => {
+    setEditingPlayer(player);
+    setNuevoJugadorNombre(player.name);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPlayer(null);
+    setNuevoJugadorNombre('');
   };
 
   const handleAddPartido = async (e: React.FormEvent, torneoId: number, equipoANombre: string, equipoBNombre: string) => {
@@ -372,12 +406,19 @@ const Dashboard = () => {
           {/* Modals */}
           <ModalCreateJugador
             isOpen={showCreateJugador}
-            onClose={() => setShowCreateJugador(false)}
+            onClose={() => {
+              setShowCreateJugador(false);
+              setEditingPlayer(null);
+              setNuevoJugadorNombre('');
+            }}
             onSubmit={handleCreateJugador}
             jugadorNombre={nuevoJugadorNombre}
             setJugadorNombre={setNuevoJugadorNombre}
             players={players}
             isLoading={isLoading}
+            editingPlayer={editingPlayer}
+            onEditPlayer={handleEditPlayer}
+            onCancelEdit={handleCancelEdit}
           />
 
           <ModalCreateTorneo

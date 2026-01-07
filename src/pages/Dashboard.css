@@ -978,12 +978,19 @@
   gap: 1rem;
   transition: all 0.3s ease;
   cursor: default;
+  position: relative;
 }
 
 .player-card:hover {
   border-color: #3b82f6;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.player-card.editing {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
 }
 
 .player-avatar {
@@ -1022,6 +1029,81 @@
   font-size: 0.75rem;
   color: #64748b;
   font-weight: 500;
+}
+
+.btn-edit-player {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.btn-edit-player svg {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-edit-player:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-edit-player:active {
+  transform: scale(0.95);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.form-buttons .btn-primary {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  box-sizing: border-box;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.form-buttons .btn-secondary {
+  flex: 1;
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 48px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.form-buttons .btn-secondary:hover {
+  background: #e2e8f0;
+  color: #475569;
+  border-color: #cbd5e1;
 }
 
 /* Modal de Partidos */
