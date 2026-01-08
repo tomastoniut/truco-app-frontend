@@ -27,6 +27,7 @@ export interface Player {
   name: string;
   tournamentId: number;
   tournamentName: string;
+  casualPlayer: boolean;
 }
 
 export interface MatchState {

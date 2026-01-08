@@ -7,6 +7,8 @@ interface ModalCreateJugadorProps {
   onSubmit: (e: React.FormEvent) => void;
   jugadorNombre: string;
   setJugadorNombre: (nombre: string) => void;
+  jugadorCasual: boolean;
+  setJugadorCasual: (casual: boolean) => void;
   players: Player[];
   isLoading: boolean;
   editingPlayer: Player | null;
@@ -22,12 +24,12 @@ const ModalCreateJugador = ({
   onSubmit,
   jugadorNombre,
   setJugadorNombre,
+  jugadorCasual,
+  setJugadorCasual,
   players,
   isLoading,
   editingPlayer,
   onEditPlayer,
-  onCancelEdit,
-  tournamentId,
   tournamentName
 }: ModalCreateJugadorProps) => {
   if (!isOpen) return null;
@@ -53,6 +55,22 @@ const ModalCreateJugador = ({
               placeholder="Ej: Juan Pérez"
               required
             />
+          </div>
+          <div className="form-group">
+            <label className="switch-label">
+              <span>Jugador Ocasional</span>
+              <div className="switch-container">
+                <input
+                  type="checkbox"
+                  id="jugador-casual"
+                  checked={jugadorCasual}
+                  onChange={(e) => setJugadorCasual(e.target.checked)}
+                  className="switch-input"
+                />
+                <span className="switch-slider"></span>
+              </div>
+            </label>
+            <p className="form-hint">Marca esta opción si el jugador participa ocasionalmente</p>
           </div>
           <button type="submit" className="btn-primary" disabled={isLoading}>
             {isLoading ? (editingPlayer ? 'Guardando...' : 'Creando...') : (editingPlayer ? 'Guardar' : 'Crear Jugador')}

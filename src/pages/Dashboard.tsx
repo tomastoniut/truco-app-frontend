@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalMatches, setTotalMatches] = useState(0);
   const [showCreateTorneo, setShowCreateTorneo] = useState(false);
-  const [showCreateJugador, setShowCreateJugador] = useState<number | null>(null);
+  const [selectedTournamentForPlayers, setSelectedTournamentForPlayers] = useState<number | null>(null);
   const [showPartidos, setShowPartidos] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [localScore, setLocalScore] = useState(0);
@@ -33,6 +33,7 @@ const Dashboard = () => {
   // Form states
   const [nuevoTorneoNombre, setNuevoTorneoNombre] = useState('');
   const [nuevoJugadorNombre, setNuevoJugadorNombre] = useState('');
+  const [nuevoJugadorCasual, setNuevoJugadorCasual] = useState(false);
   const [nuevoPartidoDate, setNuevoPartidoDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -223,7 +224,8 @@ const Dashboard = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              name: nuevoJugadorNombre
+              name: nuevoJugadorNombre,
+              casualPlayer: nuevoJugadorCasual
             }),
           });
 
@@ -231,7 +233,8 @@ const Dashboard = () => {
             const updatedPlayer = await response.json();
             setPlayers(players.map(p => p.id === updatedPlayer.id ? updatedPlayer : p));
             setNuevoJugadorNombre('');
-            setEditingPlayer(null);
+            setNuevoJugadorCasual(false);
+            setEditingPlayer(null); 
           } else {
             console.error('Error al editar jugador');
           }
@@ -243,7 +246,9 @@ const Dashboard = () => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              name: nuevoJugadorNombre
+              name: nuevoJugadorNombre,
+              tournamentId: selectedTournamentForPlayers,
+              casualPlayer: nuevoJugadorCasual
             }),
           });
 
@@ -251,6 +256,7 @@ const Dashboard = () => {
             const newPlayer = await response.json();
             setPlayers([...players, newPlayer]);
             setNuevoJugadorNombre('');
+            setNuevoJugadorCasual(false);
             // No cerramos el modal para permitir agregar más jugadores
           } else {
             console.error('Error al crear jugador');
@@ -267,11 +273,13 @@ const Dashboard = () => {
   const handleEditPlayer = (player: Player) => {
     setEditingPlayer(player);
     setNuevoJugadorNombre(player.name);
+    setNuevoJugadorCasual(player.casualPlayer);
   };
 
   const handleCancelEdit = () => {
     setEditingPlayer(null);
     setNuevoJugadorNombre('');
+    setNuevoJugadorCasual(false);
   };
 
   const handleAddPartido = async (e: React.FormEvent, torneoId: number, equipoANombre: string, equipoBNombre: string) => {
@@ -361,7 +369,7 @@ const Dashboard = () => {
 
   const handleGestionarJugadores = async (torneoId: number) => {
     await fetchPlayers(torneoId);
-    setShowCreateJugador(torneoId);
+    setSelectedTournamentForPlayers(torneoId);
   };
 
   const handleCancelarPartido = async (matchId: number) => {
@@ -407,22 +415,25 @@ const Dashboard = () => {
 
           {/* Modals */}
           <ModalCreateJugador
-            isOpen={showCreateJugador !== null}
+            isOpen={selectedTournamentForPlayers !== null}
             onClose={() => {
-              setShowCreateJugador(null);
+              setSelectedTournamentForPlayers(null);
               setEditingPlayer(null);
               setNuevoJugadorNombre('');
+              setNuevoJugadorCasual(false);
             }}
             onSubmit={handleCreateJugador}
             jugadorNombre={nuevoJugadorNombre}
             setJugadorNombre={setNuevoJugadorNombre}
+            jugadorCasual={nuevoJugadorCasual}
+            setJugadorCasual={setNuevoJugadorCasual}
             players={players}
             isLoading={isLoading}
             editingPlayer={editingPlayer}
             onEditPlayer={handleEditPlayer}
             onCancelEdit={handleCancelEdit}
-            tournamentId={showCreateJugador || 0}
-            tournamentName={torneos.find(t => t.id === showCreateJugador)?.name || ''}
+            tournamentId={selectedTournamentForPlayers || 0}
+            tournamentName={torneos.find(t => t.id === selectedTournamentForPlayers)?.name || ''}
           />
 
           <ModalCreateTorneo
