@@ -25,6 +25,8 @@ export interface Match {
 export interface Player {
   id: number;
   name: string;
+  tournamentId: number;
+  tournamentName: string;
 }
 
 export interface MatchState {

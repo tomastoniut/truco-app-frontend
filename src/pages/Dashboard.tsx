@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalMatches, setTotalMatches] = useState(0);
   const [showCreateTorneo, setShowCreateTorneo] = useState(false);
-  const [showCreateJugador, setShowCreateJugador] = useState(false);
+  const [showCreateJugador, setShowCreateJugador] = useState<number | null>(null);
   const [showPartidos, setShowPartidos] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [localScore, setLocalScore] = useState(0);
@@ -72,9 +72,12 @@ const Dashboard = () => {
     }
   };
 
-  const fetchPlayers = async () => {
+  const fetchPlayers = async (tournamentId?: number) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/players`);
+      const url = tournamentId 
+        ? `${API_BASE_URL}/api/players?tournamentId=${tournamentId}`
+        : `${API_BASE_URL}/api/players`;
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setPlayers(data);
@@ -356,6 +359,11 @@ const Dashboard = () => {
     setShowEstadisticas(torneoId);
   };
 
+  const handleGestionarJugadores = async (torneoId: number) => {
+    await fetchPlayers(torneoId);
+    setShowCreateJugador(torneoId);
+  };
+
   const handleCancelarPartido = async (matchId: number) => {
     try {
       const response = await fetch(`${API_BASE_URL}/api/matches/${matchId}/cancel`, {
@@ -388,12 +396,6 @@ const Dashboard = () => {
           <div className="torneos-header">
             <h2>Mis Torneos</h2>
             <div className="header-buttons">
-              <button className="btn-primary" onClick={() => setShowCreateJugador(true)}>
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21M12.5 7C12.5 9.20914 10.7091 11 8.5 11C6.29086 11 4.5 9.20914 4.5 7C4.5 4.79086 6.29086 3 8.5 3C10.7091 3 12.5 4.79086 12.5 7ZM20 8V14M23 11H17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Jugadores
-              </button>
               <button className="btn-primary" onClick={() => setShowCreateTorneo(true)}>
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 5V19M5 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -405,9 +407,9 @@ const Dashboard = () => {
 
           {/* Modals */}
           <ModalCreateJugador
-            isOpen={showCreateJugador}
+            isOpen={showCreateJugador !== null}
             onClose={() => {
-              setShowCreateJugador(false);
+              setShowCreateJugador(null);
               setEditingPlayer(null);
               setNuevoJugadorNombre('');
             }}
@@ -419,6 +421,8 @@ const Dashboard = () => {
             editingPlayer={editingPlayer}
             onEditPlayer={handleEditPlayer}
             onCancelEdit={handleCancelEdit}
+            tournamentId={showCreateJugador || 0}
+            tournamentName={torneos.find(t => t.id === showCreateJugador)?.name || ''}
           />
 
           <ModalCreateTorneo
@@ -494,6 +498,7 @@ const Dashboard = () => {
                   onAddPartido={setShowAddPartido}
                   onTorneoClick={handleTorneoClick}
                   onEstadisticasClick={handleEstadisticasClick}
+                  onGestionarJugadores={handleGestionarJugadores}
                 />
               ))
             )}

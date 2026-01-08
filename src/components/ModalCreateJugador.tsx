@@ -12,6 +12,8 @@ interface ModalCreateJugadorProps {
   editingPlayer: Player | null;
   onEditPlayer: (player: Player) => void;
   onCancelEdit: () => void;
+  tournamentId: number;
+  tournamentName: string;
 }
 
 const ModalCreateJugador = ({
@@ -24,7 +26,9 @@ const ModalCreateJugador = ({
   isLoading,
   editingPlayer,
   onEditPlayer,
-  onCancelEdit
+  onCancelEdit,
+  tournamentId,
+  tournamentName
 }: ModalCreateJugadorProps) => {
   if (!isOpen) return null;
 
@@ -32,7 +36,7 @@ const ModalCreateJugador = ({
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h3>Gestión de Jugadores</h3>
+          <h3>Gestión de Jugadores - {tournamentName}</h3>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         
