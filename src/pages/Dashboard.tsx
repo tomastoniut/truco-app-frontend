@@ -9,6 +9,7 @@ import ModalAddPartido from '../components/ModalAddPartido';
 import ModalPartidos from '../components/ModalPartidos';
 import ModalScoreMatch from '../components/ModalScoreMatch';
 import ModalEstadisticas from '../components/ModalEstadisticas';
+import ModalTirarReyes from '../components/ModalTirarReyes';
 import TorneoCard from '../components/TorneoCard';
 
 const Dashboard = () => {
@@ -29,6 +30,7 @@ const Dashboard = () => {
   const [estadisticas, setEstadisticas] = useState<PlayerStandingsResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [showTirarReyes, setShowTirarReyes] = useState<number | null>(null);
   
   // Form states
   const [nuevoTorneoNombre, setNuevoTorneoNombre] = useState('');
@@ -491,6 +493,12 @@ const Dashboard = () => {
             estadisticas={estadisticas}
           />
 
+          <ModalTirarReyes
+            isOpen={showTirarReyes !== null}
+            onClose={() => setShowTirarReyes(null)}
+            torneoId={showTirarReyes || 0}
+          />
+
           {/* Lista de Torneos */}
           <div className="torneos-grid">
             {torneos.length === 0 ? (
@@ -504,6 +512,7 @@ const Dashboard = () => {
             ) : (
               torneos.map((torneo) => (
                 <TorneoCard
+                  onTirarReyes={setShowTirarReyes}
                   key={torneo.id}
                   torneo={torneo}
                   onAddPartido={setShowAddPartido}

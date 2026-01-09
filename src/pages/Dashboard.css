@@ -747,6 +747,7 @@
   justify-content: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .btn-gestionar-jugadores:hover {
@@ -773,6 +774,7 @@
   justify-content: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
+  text-align: center;
 }
 
 .btn-add-partido:hover {
@@ -2303,6 +2305,8 @@
   align-items: center;
   gap: 0.5rem;
   box-shadow: 0 4px 6px rgba(245, 158, 11, 0.2);
+  justify-content: center;
+  text-align: center;
 }
 
 .btn-estadisticas svg {
@@ -2314,6 +2318,34 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(245, 158, 11, 0.3);
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.btn-tirar-reyes {
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.2);
+  justify-content: center;
+  text-align: center;
+}
+
+.btn-tirar-reyes svg {
+  width: 20px;
+  height: 20px;
+}
+
+.btn-tirar-reyes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.3);
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
 }
 
 .torneo-actions {
