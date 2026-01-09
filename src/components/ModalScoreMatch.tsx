@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useReducer, useEffect } from 'react';
 import { type Match } from '../types';
 import ConfirmDialog from './ConfirmDialog';
+import ModalHistorialPuntos, { type ScoreHistory } from './ModalHistorialPuntos';
 
 interface ModalScoreMatchProps {
   isOpen: boolean;
@@ -11,6 +12,58 @@ interface ModalScoreMatchProps {
   onUpdateScore: (isLocal: boolean, amount: number) => void;
   onFaltaEnvido: (isLocal: boolean) => void;
   onCancelarPartido: (matchId: number) => void;
+}
+
+interface HistoryState {
+  matchId: number | null;
+  history: ScoreHistory[];
+}
+
+type HistoryAction = 
+  | { type: 'ADD_ENTRY'; payload: { matchId: number; localScore: number; visitorScore: number } }
+  | { type: 'RESET' };
+
+function historyReducer(state: HistoryState, action: HistoryAction): HistoryState {
+  switch (action.type) {
+    case 'ADD_ENTRY': {
+      const { matchId, localScore, visitorScore } = action.payload;
+      
+      // Si cambió el partido, resetear historial
+      if (matchId !== state.matchId) {
+        return {
+          matchId,
+          history: [{
+            localScore,
+            visitorScore,
+            timestamp: new Date(),
+            action: 'Estado actual'
+          }]
+        };
+      }
+      
+      // Si el último registro tiene los mismos puntajes, no agregar duplicado
+      if (state.history.length > 0 && 
+          state.history[state.history.length - 1].localScore === localScore && 
+          state.history[state.history.length - 1].visitorScore === visitorScore) {
+        return state;
+      }
+      
+      const newEntry: ScoreHistory = {
+        localScore,
+        visitorScore,
+        timestamp: new Date(),
+        action: 'Estado actual'
+      };
+      
+      // Mantener solo los últimos 10 registros
+      const updated = [...state.history, newEntry].slice(-10);
+      return { ...state, history: updated };
+    }
+    case 'RESET':
+      return { matchId: null, history: [] };
+    default:
+      return state;
+  }
 }
 
 const ModalScoreMatch = ({
@@ -24,16 +77,55 @@ const ModalScoreMatch = ({
   onCancelarPartido
 }: ModalScoreMatchProps) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [historyState, dispatch] = useReducer(historyReducer, { matchId: null, history: [] });
   const isMatchCanceled = match?.stateId === 4;
 
+  // Actualizar historial cuando cambian los scores o el partido
+  useEffect(() => {
+    if (match && isOpen) {
+      dispatch({ 
+        type: 'ADD_ENTRY', 
+        payload: { matchId: match.id, localScore, visitorScore } 
+      });
+    }
+  }, [match?.id, localScore, visitorScore, isOpen]);
+
   if (!isOpen || !match) return null;
+
+  const handleRestoreScore = (index: number) => {
+    if (index < historyState.history.length - 1) { // No restaurar si es el estado actual (último)
+      const entry = historyState.history[index];
+      // Calcular la diferencia y aplicar la actualización
+      const localDiff = entry.localScore - localScore;
+      const visitorDiff = entry.visitorScore - visitorScore;
+      
+      // Aplicar las diferencias si es necesario
+      if (localDiff !== 0) {
+        onUpdateScore(true, localDiff);
+      }
+      if (visitorDiff !== 0) {
+        onUpdateScore(false, visitorDiff);
+      }
+      
+      setShowHistoryDialog(false);
+    }
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content modal-score" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Marcador del Partido</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
+          <div className="modal-header-actions">
+            <button 
+              className="history-btn" 
+              onClick={() => setShowHistoryDialog(true)}
+            >
+              Ver Historial
+            </button>
+            <button className="modal-close" onClick={onClose}>×</button>
+          </div>
         </div>
         
         <div className="score-container">
@@ -263,6 +355,18 @@ const ModalScoreMatch = ({
         type="danger"
         onConfirm={() => onCancelarPartido(match.id)}
         onCancel={() => setShowConfirmDialog(false)}
+      />
+
+      {/* Modal de Historial */}
+      <ModalHistorialPuntos
+        isOpen={showHistoryDialog}
+        match={match}
+        scoreHistory={historyState.history}
+        isMatchCanceled={isMatchCanceled}
+        localScore={localScore}
+        visitorScore={visitorScore}
+        onClose={() => setShowHistoryDialog(false)}
+        onRestoreScore={handleRestoreScore}
       />
     </div>
   );
