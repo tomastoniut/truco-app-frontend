@@ -163,7 +163,7 @@ const Dashboard = () => {
       if (response.ok) {
         const updatedMatch = await response.json();
         setSelectedMatch(updatedMatch);
-        await fetchAllMatches(2);
+        await fetchAllMatches(undefined, updatedMatch.tournamentId);
       } else {
         console.error('Error al actualizar score:', response.status);
       }
@@ -385,7 +385,7 @@ const Dashboard = () => {
 
       if (response.ok) {
         // Actualizar la lista de partidos
-        await fetchAllMatches();
+        await fetchAllMatches(undefined, selectedMatch?.tournamentId);
         await fetchTorneos();
         // Cerrar el modal si está abierto
         setSelectedMatch(null);
