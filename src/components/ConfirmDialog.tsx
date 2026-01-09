@@ -1,3 +1,6 @@
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import './ConfirmDialog.css';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -20,62 +23,83 @@ const ConfirmDialog = ({
   onCancel,
   type = 'warning'
 }: ConfirmDialogProps) => {
-  if (!isOpen) return null;
-
+  
   const getIconByType = () => {
     switch (type) {
       case 'danger':
-        return (
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="dialog-icon danger">
-            <path d="M12 9V13M12 17H12.01M5.07183 19H18.9282C20.4678 19 21.4301 17.3333 20.6603 16L13.7321 4C12.9623 2.66667 11.0377 2.66667 10.2679 4L3.33975 16C2.56995 17.3333 3.53223 19 5.07183 19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        );
+        return 'pi pi-exclamation-triangle';
       case 'warning':
-        return (
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="dialog-icon warning">
-            <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        );
+        return 'pi pi-exclamation-circle';
       case 'info':
-        return (
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="dialog-icon info">
-            <path d="M13 16H12V12H11M12 8H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        );
+        return 'pi pi-info-circle';
+      default:
+        return 'pi pi-question-circle';
     }
   };
 
+  const getSeverityClass = () => {
+    switch (type) {
+      case 'danger':
+        return 'confirm-dialog-danger';
+      case 'warning':
+        return 'confirm-dialog-warning';
+      case 'info':
+        return 'confirm-dialog-info';
+      default:
+        return 'confirm-dialog-warning';
+    }
+  };
+
+  const handleConfirm = () => {
+    onConfirm();
+    onCancel();
+  };
+
   return (
-    <div className="confirm-dialog-overlay" onClick={onCancel}>
-      <div className="confirm-dialog-content" onClick={(e) => e.stopPropagation()}>
-        <div className="confirm-dialog-header">
-          {getIconByType()}
-          <h3 className="confirm-dialog-title">{title}</h3>
+    <Dialog
+      visible={isOpen}
+      onHide={onCancel}
+      className={`modern-confirm-dialog ${getSeverityClass()}`}
+      style={{ width: '480px' }}
+      modal
+      draggable={false}
+      resizable={false}
+      showHeader={false}
+      pt={{
+        root: { className: 'modern-dialog-root' },
+        mask: { className: 'modern-dialog-mask' }
+      }}
+    >
+      <div className="modern-dialog-content">
+        {/* Icon Circle */}
+        <div className={`modern-icon-wrapper ${getSeverityClass()}`}>
+          <i className={`${getIconByType()} modern-icon`} />
         </div>
+
+        {/* Title */}
+        <h3 className="modern-dialog-title">{title}</h3>
         
-        <div className="confirm-dialog-body">
-          <p className="confirm-dialog-message">{message}</p>
-        </div>
+        {/* Message */}
+        <p className="modern-dialog-message">{message}</p>
         
-        <div className="confirm-dialog-footer">
-          <button 
-            className="confirm-dialog-btn btn-cancel"
+        {/* Actions */}
+        <div className="modern-dialog-actions">
+          <Button 
+            label={cancelText}
             onClick={onCancel}
-          >
-            {cancelText}
-          </button>
-          <button 
-            className={`confirm-dialog-btn btn-confirm ${type}`}
-            onClick={() => {
-              onConfirm();
-              onCancel(); // Cerrar el diálogo después de confirmar
-            }}
-          >
-            {confirmText}
-          </button>
+            className="modern-btn modern-btn-cancel"
+            size="large"
+          />
+          <Button 
+            label={confirmText}
+            onClick={handleConfirm}
+            className={`modern-btn modern-btn-confirm ${getSeverityClass()}`}
+            size="large"
+            autoFocus
+          />
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 };
 

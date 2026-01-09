@@ -10,6 +10,28 @@
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* Paleta de colores personalizada - Azul/Verde */
+  --primary-color: #0891b2; /* Cyan 600 */
+  --primary-dark: #0e7490; /* Cyan 700 */
+  --primary-light: #06b6d4; /* Cyan 500 */
+  --secondary-color: #059669; /* Emerald 600 */
+  --secondary-dark: #047857; /* Emerald 700 */
+  --secondary-light: #10b981; /* Emerald 500 */
+  --accent-color: #0284c7; /* Sky 600 */
+  --success-color: #059669; /* Emerald 600 */
+  --warning-color: #f59e0b; /* Amber 500 */
+  --danger-color: #dc2626; /* Red 600 */
+  --info-color: #0891b2; /* Cyan 600 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0fdfa; /* Teal 50 */
+  --bg-tertiary: #ecfeff; /* Cyan 50 */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #cbd5e1;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
 }
 
 body {

@@ -1,0 +1,257 @@
+/* ================================
+   MODERN CONFIRM DIALOG - UX/UI PRO
+   ================================ */
+
+/* Dialog Container */
+.modern-confirm-dialog .p-dialog {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(8, 145, 178, 0.15),
+              0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  animation: dialogSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modern-dialog-mask {
+  backdrop-filter: blur(4px);
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* Content Wrapper */
+.modern-dialog-content {
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+/* Icon Circle - El elemento visual principal */
+.modern-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+.modern-icon-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  padding: 8px;
+  background: linear-gradient(135deg, currentColor, transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.3;
+}
+
+.modern-icon {
+  font-size: 2.5rem;
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Icon Colors por tipo */
+.modern-icon-wrapper.confirm-dialog-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
+}
+
+.modern-icon-wrapper.confirm-dialog-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+}
+
+.modern-icon-wrapper.confirm-dialog-info {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.35);
+}
+
+/* Typography */
+.modern-dialog-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+}
+
+.modern-dialog-message {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0 0 2rem;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Actions */
+.modern-dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+/* Botones Modernos */
+.modern-btn {
+  min-width: 120px;
+  height: 48px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.modern-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.modern-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Botón Cancelar */
+.modern-btn-cancel {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.modern-btn-cancel:hover {
+  background: #e2e8f0 !important;
+  color: #475569 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.modern-btn-cancel:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Botón Confirmar - Variantes */
+.modern-btn-confirm {
+  color: white !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.modern-btn-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.modern-btn-confirm:active {
+  transform: translateY(0);
+}
+
+/* Danger Button */
+.modern-btn-confirm.confirm-dialog-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
+.modern-btn-confirm.confirm-dialog-danger:hover {
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+}
+
+/* Warning Button */
+.modern-btn-confirm.confirm-dialog-warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+}
+
+.modern-btn-confirm.confirm-dialog-warning:hover {
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+}
+
+/* Info Button */
+.modern-btn-confirm.confirm-dialog-info {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.3);
+}
+
+.modern-btn-confirm.confirm-dialog-info:hover {
+  box-shadow: 0 8px 24px rgba(8, 145, 178, 0.4);
+}
+
+/* Animations */
+@keyframes dialogSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modern-confirm-dialog .p-dialog {
+    width: 92vw !important;
+    max-width: 420px !important;
+    margin: 1rem;
+  }
+  
+  .modern-dialog-content {
+    padding: 2rem 1.5rem 1.75rem;
+  }
+  
+  .modern-icon-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .modern-icon {
+    font-size: 2rem;
+  }
+  
+  .modern-dialog-title {
+    font-size: 1.25rem;
+  }
+  
+  .modern-dialog-message {
+    font-size: 0.9375rem;
+  }
+  
+  .modern-dialog-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .modern-btn {
+    width: 100%;
+    min-width: unset;
+  }
+}
