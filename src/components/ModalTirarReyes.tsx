@@ -26,6 +26,7 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
     jugadoresAfuera?: Player[];
   } | null>(null);
   const [error, setError] = useState<string>('');
+  const [isCreatingMatches, setIsCreatingMatches] = useState(false);
 
   const fetchJugadores = async () => {
     try {
@@ -118,6 +119,61 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
       // ver-quien-sale
       const jugadoresAfuera = jugadoresRandom.slice(0, jugadoresQuedan);
       setResultado({ jugadoresAfuera });
+    }
+  };
+
+  const handleCrearPartidos = async () => {
+    if (!resultado?.equipos || resultado.equipos.length < 2) {
+      setError('No hay suficientes equipos para crear partidos');
+      return;
+    }
+
+    setIsCreatingMatches(true);
+    setError('');
+
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const equipos = resultado.equipos;
+      const partidosCreados: number[] = [];
+
+      // Crear partidos de a pares: E1 vs E2, E3 vs E4, etc.
+      for (let i = 0; i < equipos.length - 1; i += 2) {
+        const equipoLocal = equipos[i];
+        const equipoVisitante = equipos[i + 1];
+
+        const nombreLocal = equipoLocal.jugadores.map(j => j.name).join(' - ');
+        const nombreVisitante = equipoVisitante.jugadores.map(j => j.name).join(' - ');
+
+        const response = await fetch(`${API_BASE_URL}/api/matches`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            date: today,
+            localTeamName: nombreLocal,
+            localTeamPlayerIds: equipoLocal.jugadores.map(j => j.id),
+            visitorTeamName: nombreVisitante,
+            visitorTeamPlayerIds: equipoVisitante.jugadores.map(j => j.id),
+            tournamentId: torneoId
+          }),
+        });
+
+        if (response.ok) {
+          partidosCreados.push(i / 2 + 1);
+        } else {
+          throw new Error(`Error al crear partido ${i / 2 + 1}`);
+        }
+      }
+
+      
+      // Cerrar modal y refrescar
+      onClose();
+    } catch (error) {
+      console.error('Error al crear partidos:', error);
+      setError('Hubo un error al crear los partidos. Inténtalo de nuevo.');
+    } finally {
+      setIsCreatingMatches(false);
     }
   };
 
@@ -606,25 +662,38 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
 
         <div className="modal-footer" style={{ 
           display: 'flex', 
+          flexDirection: 'column',
           gap: '12px', 
-          justifyContent: 'flex-end',
           padding: '1.25rem',
           borderTop: '1px solid #e5e7eb'
         }}>
           <button 
             className="btn-primary" 
             onClick={handleTirarReyes}
-            disabled={isButtonDisabled()}
+            disabled={isButtonDisabled() || isCreatingMatches}
             style={{
-              opacity: isButtonDisabled() ? 0.5 : 1,
-              cursor: isButtonDisabled() ? 'not-allowed' : 'pointer'
+              width: '100%',
+              opacity: (isButtonDisabled() || isCreatingMatches) ? 0.5 : 1,
+              cursor: (isButtonDisabled() || isCreatingMatches) ? 'not-allowed' : 'pointer'
             }}
           >
-            {modalidad === 'ver-quien-juega' ? '🎴 Ver quién juega' : '🎴 Ver quién sale'}
+            {modalidad === 'ver-quien-juega' ? 'Ver quién juega' : 'Ver quién sale'}
           </button>
-          <button className="btn-secondary" onClick={onClose}>
-            Cerrar
-          </button>
+          {resultado?.equipos && modalidad === 'ver-quien-juega' && (
+            <button 
+              className="btn-primary" 
+              onClick={handleCrearPartidos}
+              disabled={isCreatingMatches || resultado.equipos.length < 2}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                opacity: (isCreatingMatches || resultado.equipos.length < 2) ? 0.5 : 1,
+                cursor: (isCreatingMatches || resultado.equipos.length < 2) ? 'not-allowed' : 'pointer'
+              }}
+            >
+              {isCreatingMatches ? 'Creando...' : 'Crear Partidos'}
+            </button>
+          )}
         </div>
       </div>
     </div>
