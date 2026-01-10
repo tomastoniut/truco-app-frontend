@@ -1,9 +1,8 @@
 import { type PlayerStandingsResponse } from '../types';
+import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+import './ModalEstadisticas.css';
 
 interface ModalEstadisticasProps {
   isOpen: boolean;
@@ -31,7 +30,7 @@ const ModalEstadisticas = ({
   // Template para la columna de posición con badges
   const posicionBodyTemplate = (rowData: PlayerStandingsResponse & { posicion: number }) => {
     const isTop3 = rowData.posicion <= 3;
-    const badgeClass = isTop3 ? `position-badge-prime top-${rowData.posicion}` : 'position-badge-prime';
+    const badgeClass = isTop3 ? `position-badge top-${rowData.posicion}` : 'position-badge';
     
     return (
       <span className={badgeClass}>
@@ -40,24 +39,29 @@ const ModalEstadisticas = ({
     );
   };
 
-  // Template para PG (ganados) con color verde
+  // Template para PG (ganados)
   const winsBodyTemplate = (rowData: PlayerStandingsResponse) => {
-    return <span className="wins-cell-prime">{rowData.matchesWon}</span>;
+    return <span className="wins-cell">{rowData.matchesWon}</span>;
   };
 
-  // Template para PP (perdidos) con color rojo
+  // Template para PP (perdidos)
   const lossesBodyTemplate = (rowData: PlayerStandingsResponse) => {
-    return <span className="losses-cell-prime">{rowData.matchesLost}</span>;
+    return <span className="losses-cell">{rowData.matchesLost}</span>;
   };
 
-  // Template para % Victoria con gradiente
+  // Template para % Victoria
   const winrateBodyTemplate = (rowData: PlayerStandingsResponse) => {
-    return <span className="winrate-cell-prime">{rowData.winRate}</span>;
+    return rowData.winRate || '0%';
   };
 
   // Template para nombre de jugador
   const playerNameBodyTemplate = (rowData: PlayerStandingsResponse) => {
-    return <span className="player-name-prime">{rowData.playerName}</span>;
+    return <span className="player-name">{rowData.playerName}</span>;
+  };
+
+  // Template para PJ (partidos jugados)
+  const matchesPlayedBodyTemplate = (rowData: PlayerStandingsResponse) => {
+    return <span className="stats-cell">{rowData.totalMatches}</span>;
   };
 
   // Row class para top 3
@@ -69,65 +73,68 @@ const ModalEstadisticas = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>Estadísticas - {torneoName}</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
-        </div>
-        
-        <div className="estadisticas-container-prime">
-          {estadisticas.length === 0 ? (
-            <p className="empty-message">No hay estadísticas disponibles para este torneo.</p>
-          ) : (
-            <DataTable 
-              value={estadisticasConPosicion} 
-              className="estadisticas-datatable"
-              rowClassName={rowClassName}
-              stripedRows
-              showGridlines={false}
-              responsiveLayout="scroll"
-            >
-              <Column 
-                field="posicion" 
-                header="Pos" 
-                body={posicionBodyTemplate}
-                style={{ width: '80px', textAlign: 'center' }}
-              />
-              <Column 
-                field="playerName" 
-                header="Jugador" 
-                body={playerNameBodyTemplate}
-                style={{ minWidth: '150px' }}
-              />
-              <Column 
-                field="totalMatches" 
-                header="PJ" 
-                style={{ width: '80px', textAlign: 'center' }}
-              />
-              <Column 
-                field="matchesWon" 
-                header="PG" 
-                body={winsBodyTemplate}
-                style={{ width: '80px', textAlign: 'center' }}
-              />
-              <Column 
-                field="matchesLost" 
-                header="PP" 
-                body={lossesBodyTemplate}
-                style={{ width: '80px', textAlign: 'center' }}
-              />
-              <Column 
-                field="winRate" 
-                header="% Vic" 
-                body={winrateBodyTemplate}
-                style={{ width: '100px', textAlign: 'center' }}
-              />
-            </DataTable>
-          )}
-        </div>
+    <Dialog
+      visible={isOpen}
+      onHide={onClose}
+      header={`Estadísticas - ${torneoName}`}
+      className="modal-estadisticas"
+      dismissableMask
+    >
+      <div className="estadisticas-content">
+        {estadisticas.length === 0 ? (
+          <div className="empty-stats">
+            <i className="pi pi-chart-bar"></i>
+            <p>No hay estadísticas disponibles para este torneo</p>
+          </div>
+        ) : (
+          <DataTable 
+            value={estadisticasConPosicion} 
+            className="estadisticas-datatable"
+            rowClassName={rowClassName}
+            stripedRows
+            showGridlines={false}
+            responsiveLayout="scroll"
+          >
+            <Column 
+              field="posicion" 
+              header="Pos" 
+              body={posicionBodyTemplate}
+              style={{ width: '80px', textAlign: 'center' }}
+            />
+            <Column 
+              field="playerName" 
+              header="Jugador" 
+              body={playerNameBodyTemplate}
+              style={{ minWidth: '150px' }}
+            />
+            <Column 
+              field="totalMatches" 
+              header="PJ" 
+              body={matchesPlayedBodyTemplate}
+              style={{ width: '80px', textAlign: 'center' }}
+            />
+            <Column 
+              field="matchesWon" 
+              header="PG" 
+              body={winsBodyTemplate}
+              style={{ width: '80px', textAlign: 'center' }}
+            />
+            <Column 
+              field="matchesLost" 
+              header="PP" 
+              body={lossesBodyTemplate}
+              style={{ width: '80px', textAlign: 'center' }}
+            />
+            <Column 
+              field="winRate" 
+              header="% Vic" 
+              body={winrateBodyTemplate}
+              style={{ width: '100px', textAlign: 'center' }}
+            />
+          </DataTable>
+        )}
       </div>
-    </div>
+    </Dialog>
   );
 };
 

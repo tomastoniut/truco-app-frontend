@@ -1,0 +1,343 @@
+/* Modal Estadísticas */
+.modal-estadisticas {
+  width: 90vw;
+  max-width: 900px;
+}
+
+.modal-estadisticas .p-dialog-header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 1.25rem 1.5rem;
+  border-bottom: none;
+}
+
+.modal-estadisticas .p-dialog-header .p-dialog-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal-estadisticas .p-dialog-header .p-dialog-title::before {
+  content: '\e923';
+  font-family: 'primeicons';
+  font-size: 1.5rem;
+}
+
+.modal-estadisticas .p-dialog-header-close {
+  color: white !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px;
+  width: 2.5rem;
+  height: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.modal-estadisticas .p-dialog-header-close:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: rotate(90deg);
+}
+
+.modal-estadisticas .p-dialog-content {
+  padding: 1.5rem 2rem;
+  background: #ffffff;
+  overflow: hidden;
+  max-height: 600px;
+}
+
+/* Estadísticas Container */
+.estadisticas-content {
+  max-height: 550px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.estadisticas-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.estadisticas-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.estadisticas-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.estadisticas-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* DataTable Styling */
+.estadisticas-datatable {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.estadisticas-datatable .p-datatable-thead > tr > th {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+  color: white !important;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem 0.75rem !important;
+  border: none !important;
+  white-space: nowrap;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr:hover {
+  background-color: #f0f9ff !important;
+  transform: translateX(4px);
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem 0.75rem !important;
+  border: none !important;
+  font-size: 0.95rem;
+}
+
+/* Position Badge */
+.position-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 8px rgba(100, 116, 139, 0.25);
+  transition: all 0.3s ease;
+}
+
+.estadisticas-datatable .p-datatable-tbody > tr:hover .position-badge {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.35);
+}
+
+.position-badge.top-1 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #92400e;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.5);
+  border: 3px solid #fff;
+  font-size: 1.1rem;
+}
+
+.position-badge.top-2 {
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 100%);
+  color: #1f2937;
+  box-shadow: 0 4px 14px rgba(192, 192, 192, 0.5);
+  border: 3px solid #fff;
+  font-size: 1.05rem;
+}
+
+.position-badge.top-3 {
+  background: linear-gradient(135deg, #cd7f32 0%, #b8733f 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(205, 127, 50, 0.5);
+  border: 3px solid #fff;
+}
+
+/* Top 3 Rows */
+.estadisticas-datatable .top-1-row {
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.08) 0%, transparent 100%) !important;
+  border-left: 4px solid #ffd700 !important;
+}
+
+.estadisticas-datatable .top-1-row:hover {
+  background: linear-gradient(to right, rgba(255, 215, 0, 0.12) 0%, rgba(240, 249, 255, 1) 100%) !important;
+}
+
+.estadisticas-datatable .top-2-row {
+  background: linear-gradient(to right, rgba(192, 192, 192, 0.08) 0%, transparent 100%) !important;
+  border-left: 4px solid #c0c0c0 !important;
+}
+
+.estadisticas-datatable .top-2-row:hover {
+  background: linear-gradient(to right, rgba(192, 192, 192, 0.12) 0%, rgba(240, 249, 255, 1) 100%) !important;
+}
+
+.estadisticas-datatable .top-3-row {
+  background: linear-gradient(to right, rgba(205, 127, 50, 0.08) 0%, transparent 100%) !important;
+  border-left: 4px solid #cd7f32 !important;
+}
+
+.estadisticas-datatable .top-3-row:hover {
+  background: linear-gradient(to right, rgba(205, 127, 50, 0.12) 0%, rgba(240, 249, 255, 1) 100%) !important;
+}
+
+/* Player Name */
+.player-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.top-1-row .player-name {
+  color: #92400e;
+}
+
+.top-2-row .player-name {
+  color: #475569;
+}
+
+.top-3-row .player-name {
+  color: #78350f;
+}
+
+/* Stats Cells */
+.stats-cell {
+  font-weight: 600;
+  color: #475569;
+}
+
+.wins-cell {
+  color: var(--secondary-color);
+  font-weight: 700;
+  background: rgba(5, 150, 105, 0.1);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.losses-cell {
+  color: #dc2626;
+  font-weight: 700;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.winrate-cell {
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+  color: #0891b2 !important;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Empty State */
+.empty-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+}
+
+.empty-stats i {
+  font-size: 4rem;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.empty-stats p {
+  margin: 0;
+  color: #64748b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal-estadisticas {
+    width: 95vw;
+  }
+
+  .modal-estadisticas .p-dialog-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .modal-estadisticas .p-dialog-header .p-dialog-title {
+    font-size: 1.2rem;
+  }
+
+  .modal-estadisticas .p-dialog-header .p-dialog-title::before {
+    font-size: 1.3rem;
+  }
+
+  .modal-estadisticas .p-dialog-content {
+    padding: 1rem 1.5rem;
+    max-height: 500px;
+  }
+
+  .estadisticas-content {
+    max-height: 450px;
+  }
+
+  .estadisticas-datatable .p-datatable-thead > tr > th {
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.75rem;
+  }
+
+  .estadisticas-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.875rem;
+  }
+
+  .position-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .position-badge.top-1,
+  .position-badge.top-2,
+  .position-badge.top-3 {
+    border-width: 2px;
+  }
+
+  .player-name {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-estadisticas .p-dialog-header {
+    padding: 1rem;
+  }
+
+  .modal-estadisticas .p-dialog-header .p-dialog-title {
+    font-size: 1.1rem;
+  }
+
+  .modal-estadisticas .p-dialog-content {
+    padding: 1rem;
+  }
+
+  .estadisticas-datatable .p-datatable-thead > tr > th {
+    padding: 0.65rem 0.35rem !important;
+    font-size: 0.7rem;
+  }
+
+  .estadisticas-datatable .p-datatable-tbody > tr > td {
+    padding: 0.65rem 0.35rem !important;
+    font-size: 0.8rem;
+  }
+
+  .wins-cell,
+  .losses-cell,
+  .winrate-cell {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.8rem;
+  }
+}
