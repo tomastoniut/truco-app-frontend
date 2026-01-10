@@ -15,7 +15,7 @@ const TorneoCard = ({ torneo, onAddPartido, onTorneoClick, onEstadisticasClick, 
       <div className="torneo-header">
         <div>
           <h3>{torneo.name}</h3>
-          <p className="torneo-id">ID: {torneo.id} • Creado por: {torneo.createdBy}</p>
+          <p className="torneo-id">Creado por: {torneo.createdBy}</p>
         </div>
         <div className="torneo-stats">
           <span className="badge">{torneo.partidos.length} partidos</span>

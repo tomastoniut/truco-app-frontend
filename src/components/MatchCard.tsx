@@ -9,6 +9,7 @@ interface MatchCardProps {
 }
 
 const MatchCard = ({ match, onClick }: MatchCardProps) => {
+  
   const getStatusSeverity = (status: string) => {
     const statusLower = status.toLowerCase().replace(/\s+/g, '_');
     switch (statusLower) {

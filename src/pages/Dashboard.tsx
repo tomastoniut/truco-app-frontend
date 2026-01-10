@@ -96,9 +96,7 @@ const Dashboard = () => {
     stateId?: number, 
     tournamentId?: number, 
     page: number = 0, 
-    size: number = 10,
-    sortBy: string = 'match',
-    sortDirection: string = 'DESC'
+    size: number = 10
   ) => {
     try {
       let url = `${API_BASE_URL}/api/matches`;
@@ -108,8 +106,7 @@ const Dashboard = () => {
       if (tournamentId) params.append('tournamentId', tournamentId.toString());
       params.append('page', page.toString());
       params.append('size', size.toString());
-      params.append('sortBy', sortBy);
-      params.append('sortDirection', sortDirection);
+
       
       url += `?${params.toString()}`;
       
@@ -117,7 +114,7 @@ const Dashboard = () => {
       if (response.ok) {
         const data: Page<Match> = await response.json();
         setAllMatches(data.content);
-        setCurrentPage(data.number);
+        setCurrentPage(data.pageNumber);
         setTotalPages(data.totalPages);
         setTotalMatches(data.totalElements);
       }

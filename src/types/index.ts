@@ -2,6 +2,7 @@ export interface Torneo {
   id: number;
   name: string;
   createdBy: string;
+  tournamentCode: string;
   partidos: Match[];
 }
 
@@ -37,13 +38,12 @@ export interface MatchState {
 
 export interface Page<T> {
   content: T[];
-  totalPages: number;
+  pageNumber: number;
+  pageSize: number;
   totalElements: number;
-  last: boolean;
+  totalPages: number;
   first: boolean;
-  number: number;
-  size: number;
-  numberOfElements: number;
+  last: boolean;
   empty: boolean;
 }
 
