@@ -23,8 +23,6 @@ const ModalAddPartido = ({
   torneos,
   onClose,
   onSubmit,
-  partidoDate,
-  setPartidoDate,
   jugadoresA,
   setJugadoresA,
   jugadoresB,
@@ -55,16 +53,6 @@ const ModalAddPartido = ({
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <form onSubmit={(e) => onSubmit(e, torneoId, equipoANombre, equipoBNombre)}>
-          <div className="form-group">
-            <label htmlFor="fecha">Fecha del Partido</label>
-            <input
-              type="date"
-              id="fecha"
-              value={partidoDate}
-              onChange={(e) => setPartidoDate(e.target.value)}
-              required
-            />
-          </div>
           
           <div className="form-row">
             <div className="form-group">
