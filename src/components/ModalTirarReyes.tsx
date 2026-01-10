@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import { Chip } from 'primereact/chip';
+import { RadioButton } from 'primereact/radiobutton';
+import { Steps } from 'primereact/steps';
 import { type Player, API_BASE_URL } from '../types';
+import './ModalTirarReyes.css';
 
 interface ModalTirarReyesProps {
   isOpen: boolean;
@@ -15,6 +21,7 @@ interface Equipo {
 }
 
 const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) => {
+  const [activeStep, setActiveStep] = useState(0);
   const [jugadores, setJugadores] = useState<Player[]>([]);
   const [jugadoresSeleccionados, setJugadoresSeleccionados] = useState<number[]>([]);
   const [modalidad, setModalidad] = useState<Modalidad>('ver-quien-juega');
@@ -27,6 +34,12 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
   } | null>(null);
   const [error, setError] = useState<string>('');
   const [isCreatingMatches, setIsCreatingMatches] = useState(false);
+
+  const steps = [
+    { label: 'Jugadores' },
+    { label: 'Configuración' },
+    { label: 'Resultado' }
+  ];
 
   const fetchJugadores = async () => {
     try {
@@ -43,6 +56,7 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
   };
 
   const resetForm = () => {
+    setActiveStep(0);
     setJugadoresSeleccionados([]);
     setModalidad('ver-quien-juega');
     setCantidadEquipos(2);
@@ -86,7 +100,6 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
       const totalJugadoresNecesarios = cantidadEquipos * jugadoresPorEquipo;
       return jugadoresSeleccionados.length < totalJugadoresNecesarios;
     } else {
-      // ver-quien-sale
       return jugadoresSeleccionados.length <= jugadoresQuedan;
     }
   };
@@ -112,14 +125,14 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
         equipos.push({ numero: i + 1, jugadores: jugadoresEquipo });
       }
 
-      // Guardar también los jugadores en orden aleatorio para mostrar correctamente quiénes quedan afuera
       const jugadoresAfuera = jugadoresRandom.slice(cantidadEquipos * jugadoresPorEquipo);
       setResultado({ equipos, jugadoresAfuera: jugadoresAfuera.length > 0 ? jugadoresAfuera : undefined });
     } else {
-      // ver-quien-sale
       const jugadoresAfuera = jugadoresRandom.slice(0, jugadoresQuedan);
       setResultado({ jugadoresAfuera });
     }
+
+    setActiveStep(2);
   };
 
   const handleCrearPartidos = async () => {
@@ -134,9 +147,7 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
     try {
       const today = new Date().toISOString().split('T')[0];
       const equipos = resultado.equipos;
-      const partidosCreados: number[] = [];
 
-      // Crear partidos de a pares: E1 vs E2, E3 vs E4, etc.
       for (let i = 0; i < equipos.length - 1; i += 2) {
         const equipoLocal = equipos[i];
         const equipoVisitante = equipos[i + 1];
@@ -159,15 +170,11 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
           }),
         });
 
-        if (response.ok) {
-          partidosCreados.push(i / 2 + 1);
-        } else {
+        if (!response.ok) {
           throw new Error(`Error al crear partido ${i / 2 + 1}`);
         }
       }
 
-      
-      // Cerrar modal y refrescar
       onClose();
     } catch (error) {
       console.error('Error al crear partidos:', error);
@@ -177,526 +184,370 @@ const ModalTirarReyes = ({ isOpen, onClose, torneoId }: ModalTirarReyesProps) =>
     }
   };
 
-  if (!isOpen) return null;
 
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '700px' }}>
-        <div className="modal-header">
-          <h2>🎴 Tirar Reyes</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
-        
-        <div className="modal-body" style={{ maxHeight: '65vh', overflowY: 'auto', padding: '1.5rem' }}>
-          {/* Selección de Jugadores */}
-          <div className="form-section" style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ marginBottom: '0.5rem', fontSize: '1.1rem', fontWeight: '600' }}>Jugadores Presentes</h3>
-            <p style={{ marginBottom: '1rem', fontSize: '0.9rem', color: '#666' }}>
-              Selecciona los jugadores que participarán en la tirada de reyes
-            </p>
-            
-            {jugadores.length === 0 ? (
-              <div style={{ 
-                padding: '2rem', 
-                textAlign: 'center', 
-                backgroundColor: '#f8f9fa', 
-                borderRadius: '8px',
-                color: '#666'
-              }}>
-                <p>No hay jugadores registrados en este torneo</p>
-              </div>
-            ) : (
-              <>
-                <div style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', 
-                  gap: '12px', 
-                  marginBottom: '1rem' 
-                }}>
-                  {jugadores.map(jugador => (
-                    <label 
-                      key={jugador.id} 
-                      style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        padding: '12px', 
-                        border: jugadoresSeleccionados.includes(jugador.id) ? '2px solid #3b82f6' : '2px solid #e5e7eb', 
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        backgroundColor: jugadoresSeleccionados.includes(jugador.id) ? '#eff6ff' : 'white',
-                        transition: 'all 0.2s ease',
-                        fontWeight: jugadoresSeleccionados.includes(jugador.id) ? '500' : '400'
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={jugadoresSeleccionados.includes(jugador.id)}
-                        onChange={() => toggleJugador(jugador.id)}
-                        style={{ marginRight: '10px', cursor: 'pointer', width: '16px', height: '16px' }}
-                      />
-                      {jugador.name}
-                    </label>
-                  ))}
-                </div>
-                <div style={{ 
-                  padding: '10px 12px', 
-                  backgroundColor: '#f0f9ff', 
-                  borderRadius: '6px',
-                  fontSize: '0.9rem',
-                  color: '#0369a1',
-                  fontWeight: '500'
-                }}>
-                  ✓ {jugadoresSeleccionados.length} jugador{jugadoresSeleccionados.length !== 1 ? 'es' : ''} seleccionado{jugadoresSeleccionados.length !== 1 ? 's' : ''}
-                </div>
-              </>
-            )}
-          </div>
+  const totalNecesarios = modalidad === 'ver-quien-juega' 
+    ? cantidadEquipos * jugadoresPorEquipo 
+    : jugadoresQuedan + 1;
 
-          {/* Modalidad */}
-          <div className="form-section" style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: '600' }}>Modalidad</h3>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              <label style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                padding: '10px 16px',
-                border: modalidad === 'ver-quien-juega' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                backgroundColor: modalidad === 'ver-quien-juega' ? '#eff6ff' : 'white',
-                fontWeight: modalidad === 'ver-quien-juega' ? '500' : '400',
-                transition: 'all 0.2s ease',
-                flex: '1',
-                minWidth: '150px'
-              }}>
-                <input
-                  type="radio"
-                  name="modalidad"
-                  checked={modalidad === 'ver-quien-juega'}
-                  onChange={() => {
-                    setModalidad('ver-quien-juega');
-                    setResultado(null);
-                    setError('');
-                  }}
-                  style={{ marginRight: '8px', cursor: 'pointer' }}
-                />
-                Ver quién juega
-              </label>
-              <label style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                padding: '10px 16px',
-                border: modalidad === 'ver-quien-sale' ? '2px solid #3b82f6' : '2px solid #e5e7eb',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                backgroundColor: modalidad === 'ver-quien-sale' ? '#eff6ff' : 'white',
-                fontWeight: modalidad === 'ver-quien-sale' ? '500' : '400',
-                transition: 'all 0.2s ease',
-                flex: '1',
-                minWidth: '150px'
-              }}>
-                <input
-                  type="radio"
-                  name="modalidad"
-                  checked={modalidad === 'ver-quien-sale'}
-                  onChange={() => {
-                    setModalidad('ver-quien-sale');
-                    setResultado(null);
-                    setError('');
-                  }}
-                  style={{ marginRight: '8px', cursor: 'pointer' }}
-                />
-                Ver quién sale
-              </label>
-            </div>
-          </div>
+  const tieneJugadoresSuficientes = jugadoresSeleccionados.length >= totalNecesarios;
 
-          {/* Configuración según modalidad */}
-          {modalidad === 'ver-quien-juega' ? (
-            <div className="form-section" style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: '600' }}>Configuración de Equipos</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-                <div className="form-group">
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.9rem' }}>
-                    Cantidad de equipos
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (cantidadEquipos > 1) {
-                          setCantidadEquipos(cantidadEquipos - 1);
-                          setResultado(null);
-                          setError('');
-                        }
-                      }}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        border: '2px solid #e5e7eb',
-                        backgroundColor: cantidadEquipos > 1 ? 'white' : '#f3f4f6',
-                        color: cantidadEquipos > 1 ? '#3b82f6' : '#9ca3af',
-                        fontSize: '1.5rem',
-                        fontWeight: '600',
-                        cursor: cantidadEquipos > 1 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                      disabled={cantidadEquipos <= 1}
-                    >
-                      −
-                    </button>
-                    <div style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      padding: '10px',
-                      fontSize: '1.2rem',
-                      fontWeight: '600',
-                      color: '#1e293b',
-                      backgroundColor: '#f8fafc',
-                      borderRadius: '8px',
-                      border: '2px solid #e2e8f0'
-                    }}>
-                      {cantidadEquipos}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (cantidadEquipos < 10) {
-                          setCantidadEquipos(cantidadEquipos + 1);
-                          setResultado(null);
-                          setError('');
-                        }
-                      }}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        border: '2px solid #e5e7eb',
-                        backgroundColor: cantidadEquipos < 10 ? 'white' : '#f3f4f6',
-                        color: cantidadEquipos < 10 ? '#3b82f6' : '#9ca3af',
-                        fontSize: '1.5rem',
-                        fontWeight: '600',
-                        cursor: cantidadEquipos < 10 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                      disabled={cantidadEquipos >= 10}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.9rem' }}>
-                    Jugadores por equipo
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (jugadoresPorEquipo > 1) {
-                          setJugadoresPorEquipo(jugadoresPorEquipo - 1);
-                          setResultado(null);
-                          setError('');
-                        }
-                      }}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        border: '2px solid #e5e7eb',
-                        backgroundColor: jugadoresPorEquipo > 1 ? 'white' : '#f3f4f6',
-                        color: jugadoresPorEquipo > 1 ? '#3b82f6' : '#9ca3af',
-                        fontSize: '1.5rem',
-                        fontWeight: '600',
-                        cursor: jugadoresPorEquipo > 1 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                      disabled={jugadoresPorEquipo <= 1}
-                    >
-                      −
-                    </button>
-                    <div style={{
-                      flex: 1,
-                      textAlign: 'center',
-                      padding: '10px',
-                      fontSize: '1.2rem',
-                      fontWeight: '600',
-                      color: '#1e293b',
-                      backgroundColor: '#f8fafc',
-                      borderRadius: '8px',
-                      border: '2px solid #e2e8f0'
-                    }}>
-                      {jugadoresPorEquipo}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (jugadoresPorEquipo < 10) {
-                          setJugadoresPorEquipo(jugadoresPorEquipo + 1);
-                          setResultado(null);
-                          setError('');
-                        }
-                      }}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        border: '2px solid #e5e7eb',
-                        backgroundColor: jugadoresPorEquipo < 10 ? 'white' : '#f3f4f6',
-                        color: jugadoresPorEquipo < 10 ? '#3b82f6' : '#9ca3af',
-                        fontSize: '1.5rem',
-                        fontWeight: '600',
-                        cursor: jugadoresPorEquipo < 10 ? 'pointer' : 'not-allowed',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.2s ease'
-                      }}
-                      disabled={jugadoresPorEquipo >= 10}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div style={{ 
-                marginTop: '0.75rem', 
-                padding: '10px 12px', 
-                backgroundColor: jugadoresSeleccionados.length >= cantidadEquipos * jugadoresPorEquipo ? '#d1fae5' : '#fef3c7', 
-                borderRadius: '6px',
-                fontSize: '0.85rem',
-                color: jugadoresSeleccionados.length >= cantidadEquipos * jugadoresPorEquipo ? '#065f46' : '#92400e',
-                border: `2px solid ${jugadoresSeleccionados.length >= cantidadEquipos * jugadoresPorEquipo ? '#10b981' : '#fbbf24'}`,
-                fontWeight: '500'
-              }}>
-                {jugadoresSeleccionados.length >= cantidadEquipos * jugadoresPorEquipo ? '✓' : 'ℹ️'} Se necesitan al menos {cantidadEquipos * jugadoresPorEquipo} jugadores ({jugadoresSeleccionados.length} seleccionados)
-                {jugadoresSeleccionados.length > cantidadEquipos * jugadoresPorEquipo && (
-                  <><br /><small>🎲 {jugadoresSeleccionados.length - cantidadEquipos * jugadoresPorEquipo} jugador{jugadoresSeleccionados.length - cantidadEquipos * jugadoresPorEquipo !== 1 ? 'es' : ''} quedarán afuera aleatoriamente</small></>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="form-section" style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: '600' }}>Configuración</h3>
-              <div className="form-group">
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', fontSize: '0.9rem' }}>
-                  Jugadores que quedan afuera
-                </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', maxWidth: '300px' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (jugadoresQuedan > 1) {
-                        setJugadoresQuedan(jugadoresQuedan - 1);
-                        setResultado(null);
-                        setError('');
-                      }
-                    }}
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '8px',
-                      border: '2px solid #e5e7eb',
-                      backgroundColor: jugadoresQuedan > 1 ? 'white' : '#f3f4f6',
-                      color: jugadoresQuedan > 1 ? '#3b82f6' : '#9ca3af',
-                      fontSize: '1.5rem',
-                      fontWeight: '600',
-                      cursor: jugadoresQuedan > 1 ? 'pointer' : 'not-allowed',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                    disabled={jugadoresQuedan <= 1}
-                  >
-                    −
-                  </button>
-                  <div style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    padding: '10px',
-                    fontSize: '1.2rem',
-                    fontWeight: '600',
-                    color: '#1e293b',
-                    backgroundColor: '#f8fafc',
-                    borderRadius: '8px',
-                    border: '2px solid #e2e8f0'
-                  }}>
-                    {jugadoresQuedan}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const maxQuedan = Math.max(1, jugadoresSeleccionados.length - 1);
-                      if (jugadoresQuedan < maxQuedan) {
-                        setJugadoresQuedan(jugadoresQuedan + 1);
-                        setResultado(null);
-                        setError('');
-                      }
-                    }}
-                    style={{
-                      width: '40px',
-                      height: '40px',
-                      borderRadius: '8px',
-                      border: '2px solid #e5e7eb',
-                      backgroundColor: jugadoresQuedan < Math.max(1, jugadoresSeleccionados.length - 1) ? 'white' : '#f3f4f6',
-                      color: jugadoresQuedan < Math.max(1, jugadoresSeleccionados.length - 1) ? '#3b82f6' : '#9ca3af',
-                      fontSize: '1.5rem',
-                      fontWeight: '600',
-                      cursor: jugadoresQuedan < Math.max(1, jugadoresSeleccionados.length - 1) ? 'pointer' : 'not-allowed',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      transition: 'all 0.2s ease'
-                    }}
-                    disabled={jugadoresQuedan >= Math.max(1, jugadoresSeleccionados.length - 1)}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div style={{ 
-                marginTop: '0.75rem', 
-                padding: '10px 12px', 
-                backgroundColor: jugadoresSeleccionados.length > jugadoresQuedan ? '#d1fae5' : '#fef3c7', 
-                borderRadius: '6px',
-                fontSize: '0.85rem',
-                color: jugadoresSeleccionados.length > jugadoresQuedan ? '#065f46' : '#92400e',
-                border: `2px solid ${jugadoresSeleccionados.length > jugadoresQuedan ? '#10b981' : '#fbbf24'}`,
-                fontWeight: '500'
-              }}>
-                {jugadoresSeleccionados.length > jugadoresQuedan ? '✓' : 'ℹ️'} Se necesitan al menos {jugadoresQuedan + 1} jugadores ({jugadoresSeleccionados.length} seleccionados)
-              </div>
-            </div>
-          )}
+  const canGoNext = () => {
+    if (activeStep === 0) return jugadoresSeleccionados.length > 0;
+    if (activeStep === 1) return !isButtonDisabled();
+    return false;
+  };
 
-          {/* Mostrar error */}
-          {error && (
-            <div style={{ 
-              marginBottom: '1.5rem', 
-              padding: '12px 16px', 
-              backgroundColor: '#fee2e2', 
-              color: '#991b1b', 
-              borderRadius: '8px',
-              border: '2px solid #fca5a5',
-              fontWeight: '500',
-              fontSize: '0.9rem'
-            }}>
-              ⚠️ {error}
-            </div>
-          )}
+  const handleNext = () => {
+    if (activeStep === 1) {
+      handleTirarReyes();
+    } else if (canGoNext()) {
+      setActiveStep(activeStep + 1);
+    }
+  };
 
-          {/* Mostrar resultados */}
-          {resultado && (
-            <div className="form-section" style={{ 
-              backgroundColor: '#f8fafc', 
-              padding: '1.25rem', 
-              borderRadius: '12px',
-              border: '2px solid #e2e8f0'
-            }}>
-              <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: '600', color: '#1e293b' }}>🎲 Resultado</h3>
-              
-              {resultado.equipos && (
-                <div>
-                  {resultado.equipos.map(equipo => (
-                    <div key={equipo.numero} style={{ 
-                      marginBottom: '1rem', 
-                      padding: '1rem', 
-                      backgroundColor: 'white', 
-                      borderRadius: '8px',
-                      border: '2px solid #3b82f6',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                    }}>
-                      <h4 style={{ marginBottom: '0.75rem', color: '#1e40af', fontSize: '1rem', fontWeight: '600' }}>
-                        🏆 Equipo {equipo.numero}
-                      </h4>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                        {equipo.jugadores.map(jugador => (
-                          <li key={jugador.id} style={{ 
-                            padding: '6px 10px', 
-                            borderBottom: '1px solid #f1f5f9',
-                            fontSize: '0.95rem'
-                          }}>
-                            👤 {jugador.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                  
-                  {resultado.jugadoresAfuera && resultado.jugadoresAfuera.length > 0 && (
-                    <div style={{ 
-                      padding: '1rem', 
-                      backgroundColor: '#fef3c7', 
-                      borderRadius: '8px',
-                      border: '2px solid #fbbf24'
-                    }}>
-                      <h4 style={{ marginBottom: '0.75rem', color: '#92400e', fontSize: '0.95rem', fontWeight: '600' }}>
-                        ⏸️ Jugadores que no entran
-                      </h4>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                        {resultado.jugadoresAfuera.map(jugador => (
-                          <li key={jugador.id} style={{ padding: '4px 8px', fontSize: '0.9rem' }}>
-                            👤 {jugador.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
+  const handlePrevious = () => {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+      setResultado(null);
+    }
+  };
 
-            </div>
-          )}
-        </div>
-
-        <div className="modal-footer" style={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          gap: '12px', 
-          padding: '1.25rem',
-          borderTop: '1px solid #e5e7eb'
-        }}>
-          <button 
-            className="btn-primary" 
-            onClick={handleTirarReyes}
-            disabled={isButtonDisabled() || isCreatingMatches}
-            style={{
-              width: '100%',
-              opacity: (isButtonDisabled() || isCreatingMatches) ? 0.5 : 1,
-              cursor: (isButtonDisabled() || isCreatingMatches) ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {modalidad === 'ver-quien-juega' ? 'Ver quién juega' : 'Ver quién sale'}
-          </button>
-          {resultado?.equipos && modalidad === 'ver-quien-juega' && (
-            <button 
-              className="btn-primary" 
+  const renderFooter = () => (
+    <div className="tirar-reyes-footer">
+      {activeStep < 2 && (
+        <Button
+          label="Anterior"
+          onClick={handlePrevious}
+          className="p-button-text"
+          style={{
+            background: '#f1f5f9',
+            color: '#475569',
+            border: '1px solid #e2e8f0'
+          }}
+          disabled={activeStep === 0}
+        />
+      )}
+      
+      {activeStep < 2 ? (
+        <Button
+          label={activeStep === 1 ? 'Armar Equipos' : 'Siguiente'}
+          onClick={handleNext}
+          disabled={!canGoNext()}
+          className="primary-action-button"
+        />
+      ) : (
+        <>
+          {resultado?.equipos && resultado.equipos.length >= 2 && modalidad === 'ver-quien-juega' && (
+            <Button
+              label={isCreatingMatches ? 'Creando...' : 'Crear Partidos'}
               onClick={handleCrearPartidos}
               disabled={isCreatingMatches || resultado.equipos.length < 2}
-              style={{
-                width: '100%',
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                opacity: (isCreatingMatches || resultado.equipos.length < 2) ? 0.5 : 1,
-                cursor: (isCreatingMatches || resultado.equipos.length < 2) ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {isCreatingMatches ? 'Creando...' : 'Crear Partidos'}
-            </button>
+              className="create-matches-button"
+            />
           )}
-        </div>
-      </div>
+        </>
+      )}
     </div>
+  );
+
+  return (
+    <Dialog
+      visible={isOpen}
+      onHide={onClose}
+      header="Armador de equipos"
+      footer={renderFooter()}
+      className="modal-tirar-reyes"
+      dismissableMask
+    >
+      <Steps model={steps} activeIndex={activeStep} className="tirar-reyes-steps" />
+
+      <div className="tirar-reyes-content">
+        {/* Step 1: Selección de Jugadores */}
+        {activeStep === 0 && (
+          <div className="step-container">
+            <div className="step-title">
+              <span>Selecciona los jugadores presentes</span>
+            </div>
+            {jugadores.length === 0 ? (
+              <div className="empty-state">
+                <i className="pi pi-users"></i>
+                <p>No hay jugadores en este torneo</p>
+              </div>
+            ) : (
+              <div className="players-grid">
+                {jugadores.map(jugador => {
+                  const isSelected = jugadoresSeleccionados.includes(jugador.id);
+                  return (
+                    <div
+                      key={jugador.id}
+                      className={`player-card ${isSelected ? 'selected' : ''}`}
+                      onClick={() => toggleJugador(jugador.id)}
+                    >
+                      <div className="player-avatar">
+                        <i className="pi pi-user"></i>
+                      </div>
+                      <span className="player-name">{jugador.name}</span>
+                      {isSelected && <i className="pi pi-check-circle selection-check"></i>}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 2: Configuración */}
+        {activeStep === 1 && (
+          <div className="step-container">
+
+            <div className="config-section">
+              <label className="config-label">Modalidad</label>
+              <div className="modalidad-options">
+                <div 
+                  className={`modalidad-card ${modalidad === 'ver-quien-juega' ? 'selected' : ''}`}
+                  onClick={() => {
+                    setModalidad('ver-quien-juega');
+                    setError('');
+                  }}
+                >
+                  <RadioButton
+                    inputId="ver-quien-juega"
+                    value="ver-quien-juega"
+                    onChange={(e) => {
+                      setModalidad(e.value);
+                      setError('');
+                    }}
+                    checked={modalidad === 'ver-quien-juega'}
+                  />
+                  <div className="modalidad-content">
+                    <i className="pi pi-users"></i>
+                    <div className="modalidad-text">
+                      <span className="modalidad-title">Ver quién juega</span>
+                      <span className="modalidad-description">Formar equipos para jugar</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div 
+                  className={`modalidad-card ${modalidad === 'ver-quien-sale' ? 'selected' : ''}`}
+                  onClick={() => {
+                    setModalidad('ver-quien-sale');
+                    setError('');
+                  }}
+                >
+                  <RadioButton
+                    inputId="ver-quien-sale"
+                    value="ver-quien-sale"
+                    onChange={(e) => {
+                      setModalidad(e.value);
+                      setError('');
+                    }}
+                    checked={modalidad === 'ver-quien-sale'}
+                  />
+                  <div className="modalidad-content">
+                    <i className="pi pi-user-minus"></i>
+                    <div className="modalidad-text">
+                      <span className="modalidad-title">Ver quién sale</span>
+                      <span className="modalidad-description">Elegir quiénes se quedan afuera</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {modalidad === 'ver-quien-juega' ? (
+              <div className="config-section">
+                <div className="config-row">
+                  <div className="config-item">
+                    <label>Equipos</label>
+                    <div className="number-control">
+                      <Button
+                        icon="pi pi-minus"
+                        onClick={() => {
+                          if (cantidadEquipos > 1) {
+                            setCantidadEquipos(cantidadEquipos - 1);
+                            setError('');
+                          }
+                        }}
+                        disabled={cantidadEquipos <= 1}
+                        className="p-button-outlined p-button-sm"
+                      />
+                      <div className="number-display">{cantidadEquipos}</div>
+                      <Button
+                        icon="pi pi-plus"
+                        onClick={() => {
+                          if (cantidadEquipos < 10) {
+                            setCantidadEquipos(cantidadEquipos + 1);
+                            setError('');
+                          }
+                        }}
+                        disabled={cantidadEquipos >= 10}
+                        className="p-button-outlined p-button-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="config-item">
+                    <label>Jugadores/Equipo</label>
+                    <div className="number-control">
+                      <Button
+                        icon="pi pi-minus"
+                        onClick={() => {
+                          if (jugadoresPorEquipo > 1) {
+                            setJugadoresPorEquipo(jugadoresPorEquipo - 1);
+                            setError('');
+                          }
+                        }}
+                        disabled={jugadoresPorEquipo <= 1}
+                        className="p-button-outlined p-button-sm"
+                      />
+                      <div className="number-display">{jugadoresPorEquipo}</div>
+                      <Button
+                        icon="pi pi-plus"
+                        onClick={() => {
+                          if (jugadoresPorEquipo < 10) {
+                            setJugadoresPorEquipo(jugadoresPorEquipo + 1);
+                            setError('');
+                          }
+                        }}
+                        disabled={jugadoresPorEquipo >= 10}
+                        className="p-button-outlined p-button-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`info-message ${tieneJugadoresSuficientes ? 'success' : 'warning'}`}>
+                  <i className={`pi ${tieneJugadoresSuficientes ? 'pi-check-circle' : 'pi-info-circle'}`}></i>
+                  <span>
+                    Necesitas {totalNecesarios} jugadores · Tienes {jugadoresSeleccionados.length}
+                    {jugadoresSeleccionados.length > totalNecesarios && 
+                      ` · ${jugadoresSeleccionados.length - totalNecesarios} quedarán afuera`}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="config-section">
+                <div className="config-item">
+                  <label>Jugadores que quedan afuera</label>
+                  <div className="number-control">
+                    <Button
+                      icon="pi pi-minus"
+                      onClick={() => {
+                        if (jugadoresQuedan > 1) {
+                          setJugadoresQuedan(jugadoresQuedan - 1);
+                          setError('');
+                        }
+                      }}
+                      disabled={jugadoresQuedan <= 1}
+                      className="p-button-outlined p-button-sm"
+                    />
+                    <div className="number-display">{jugadoresQuedan}</div>
+                    <Button
+                      icon="pi pi-plus"
+                      onClick={() => {
+                        const maxQuedan = Math.max(1, jugadoresSeleccionados.length - 1);
+                        if (jugadoresQuedan < maxQuedan) {
+                          setJugadoresQuedan(jugadoresQuedan + 1);
+                          setError('');
+                        }
+                      }}
+                      disabled={jugadoresQuedan >= Math.max(1, jugadoresSeleccionados.length - 1)}
+                      className="p-button-outlined p-button-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className={`info-message ${tieneJugadoresSuficientes ? 'success' : 'warning'}`}>
+                  <i className={`pi ${tieneJugadoresSuficientes ? 'pi-check-circle' : 'pi-info-circle'}`}></i>
+                  <span>
+                    Necesitas {totalNecesarios} jugadores · Tienes {jugadoresSeleccionados.length}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <div className="error-message">
+                <i className="pi pi-exclamation-triangle"></i>
+                <span>{error}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 3: Resultados */}
+        {activeStep === 2 && resultado && (
+          <div className="step-container">
+            <div className="step-title">
+              <i className="pi pi-trophy"></i>
+              <span>Resultado del sorteo</span>
+            </div>
+
+            {resultado.equipos && (
+              <div className="teams-result">
+                {resultado.equipos.map(equipo => (
+                  <div key={equipo.numero} className="team-result-card">
+                    <div className="team-result-header">
+                      <i className="pi pi-users"></i>
+                      <span>Equipo {equipo.numero}</span>
+                    </div>
+                    <div className="team-result-players">
+                      {equipo.jugadores.map(jugador => (
+                        <Chip
+                          key={jugador.id}
+                          label={jugador.name}
+                          icon="pi pi-user"
+                          className="player-chip"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                {resultado.jugadoresAfuera && resultado.jugadoresAfuera.length > 0 && (
+                  <div className="players-out-card">
+                    <div className="players-out-header">
+                      <i className="pi pi-ban"></i>
+                      <span>Quedan afuera</span>
+                    </div>
+                    <div className="players-out-list">
+                      {resultado.jugadoresAfuera.map(jugador => (
+                        <Chip
+                          key={jugador.id}
+                          label={jugador.name}
+                          icon="pi pi-user"
+                          className="player-chip-out"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!resultado.equipos && resultado.jugadoresAfuera && (
+              <div className="players-out-card">
+                <div className="players-out-header">
+                  <i className="pi pi-ban"></i>
+                  <span>Jugadores que quedan afuera</span>
+                </div>
+                <div className="players-out-list">
+                  {resultado.jugadoresAfuera.map(jugador => (
+                    <Chip
+                      key={jugador.id}
+                      label={jugador.name}
+                      icon="pi pi-user"
+                      className="player-chip-out"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </Dialog>
   );
 };
 
