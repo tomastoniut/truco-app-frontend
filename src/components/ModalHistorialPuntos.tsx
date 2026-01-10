@@ -1,4 +1,9 @@
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
+import { Timeline } from 'primereact/timeline';
+import { Badge } from 'primereact/badge';
 import { type Match } from '../types';
+import './ModalHistorialPuntos.css';
 
 export interface ScoreHistory {
   localScore: number;
@@ -26,67 +31,103 @@ const ModalHistorialPuntos = ({
   onClose,
   onRestoreScore
 }: ModalHistorialPuntosProps) => {
-  if (!isOpen) return null;
+  
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
+  const reversedHistory = [...scoreHistory].reverse();
+
+  const customizedMarker = (_item: ScoreHistory, index: number) => {
+    const actualIndex = scoreHistory.length - 1 - index;
+    const isCurrentScore = actualIndex === scoreHistory.length - 1;
+    
+    return (
+      <div className={`timeline-marker ${isCurrentScore ? 'current' : ''}`}>
+        <i className={isCurrentScore ? 'pi pi-star-fill' : 'pi pi-circle-fill'} />
+      </div>
+    );
+  };
+
+  const customizedContent = (item: ScoreHistory, index: number) => {
+    const actualIndex = scoreHistory.length - 1 - index;
+    const isCurrentScore = actualIndex === scoreHistory.length - 1;
+    const canRestore = !isCurrentScore && !isMatchCanceled;
+
+    return (
+      <div className={`history-card ${isCurrentScore ? 'current' : ''}`}>
+        <div className="history-card-header">
+          <div className="history-time">
+            <i className="pi pi-clock" />
+            <span>{formatTime(item.timestamp)}</span>
+          </div>
+        </div>
+
+        <div className="history-scores-container">
+          <div className="team-score-item local">
+            <span className="team-label">{match.localTeamName}</span>
+            <span className="score-value">{item.localScore}</span>
+          </div>
+          
+          <div className="team-score-item visitor">
+            <span className="team-label">{match.visitorTeamName}</span>
+            <span className="score-value">{item.visitorScore}</span>
+          </div>
+        </div>
+
+        {canRestore && (
+          <Button
+            label="Restaurar Puntaje"
+            icon="pi pi-history"
+            onClick={() => onRestoreScore(actualIndex)}
+            className="restore-button"
+            severity="info"
+          />
+        )}
+      </div>
+    );
+  };
+
+  const headerContent = (
+    <div className="history-modal-header">
+      <i className="pi pi-history" />
+      <span>Historial de Puntos</span>
+    </div>
+  );
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content modal-history" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3>📜 Historial de Puntos</h3>
-          <button className="modal-close" onClick={onClose}>×</button>
+    <Dialog
+      visible={isOpen}
+      onHide={onClose}
+      header={headerContent}
+      className="modern-history-modal"
+      style={{ width: '90vw', maxWidth: '600px' }}
+      modal
+      draggable={false}
+      resizable={false}
+    >
+      {scoreHistory.length === 0 ? (
+        <div className="empty-history">
+          <i className="pi pi-inbox" />
+          <p>No hay historial disponible</p>
+          <span className="empty-subtitle">Los cambios de puntaje aparecerán aquí</span>
         </div>
-        <div className="history-content">
-          {scoreHistory.length === 0 ? (
-            <p className="no-history">No hay historial disponible</p>
-          ) : (
-            <div className="history-list">
-              {[...scoreHistory].reverse().map((entry, reverseIndex) => {
-                const index = scoreHistory.length - 1 - reverseIndex;
-                const isCurrentScore = index === scoreHistory.length - 1;
-                return (
-                  <div 
-                    key={index} 
-                    className={`history-item ${isCurrentScore ? 'current' : ''}`}
-                  >
-                    <div className="history-item-header">
-                      <span className="history-time">
-                        {entry.timestamp.toLocaleTimeString('es-ES', { 
-                          hour: '2-digit', 
-                          minute: '2-digit',
-                          second: '2-digit'
-                        })}
-                      </span>
-                      {isCurrentScore && (
-                        <span className="current-badge">ACTUAL</span>
-                      )}
-                    </div>
-                    <div className="history-scores">
-                      <div className="history-score">
-                        <span className="team-label">{match.localTeamName}:</span>
-                        <span className="score-value">{entry.localScore}</span>
-                      </div>
-                      <span className="score-separator">-</span>
-                      <div className="history-score">
-                        <span className="team-label">{match.visitorTeamName}:</span>
-                        <span className="score-value">{entry.visitorScore}</span>
-                      </div>
-                    </div>
-                    {!isCurrentScore && !isMatchCanceled && (
-                      <button 
-                        className="restore-btn"
-                        onClick={() => onRestoreScore(index)}
-                      >
-                        ↩️ Restaurar
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+      ) : (
+        <div className="history-timeline-container">
+          <Timeline
+            value={reversedHistory}
+            align="left"
+            content={customizedContent}
+            marker={customizedMarker}
+            className="custom-timeline"
+          />
         </div>
-      </div>
-    </div>
+      )}
+    </Dialog>
   );
 };
 

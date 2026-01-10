@@ -15,6 +15,40 @@
   position: relative;
 }
 
+/* Canceled Match */
+.modern-match-card.canceled {
+  background: linear-gradient(#fee2e2, #fecaca) padding-box,
+              linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(239, 68, 68, 0.2)) border-box;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.modern-match-card.canceled::before {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+}
+
+.modern-match-card.canceled:hover {
+  box-shadow: 0 12px 32px rgba(220, 38, 38, 0.18),
+              0 4px 12px rgba(239, 68, 68, 0.12);
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+/* Completed Match */
+.modern-match-card.completed {
+  background: linear-gradient(#d1fae5, #a7f3d0) padding-box,
+              linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(16, 185, 129, 0.2)) border-box;
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.modern-match-card.completed::before {
+  background: linear-gradient(90deg, var(--secondary-color), #10b981);
+}
+
+.modern-match-card.completed:hover {
+  box-shadow: 0 12px 32px rgba(5, 150, 105, 0.18),
+              0 4px 12px rgba(16, 185, 129, 0.12);
+  border-color: rgba(5, 150, 105, 0.4);
+}
+
 .modern-match-card::before {
   content: '';
   position: absolute;
@@ -121,16 +155,16 @@
   background: #ffffff;
   border: 2px solid #f1f5f9;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .modern-team.team-winning {
   background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   border-color: var(--secondary-color);
   box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
-  position: relative;
 }
 
-.modern-team.team-winning::after {
+.modern-team.team-completed-winner::after {
   content: '🏆';
   position: absolute;
   top: -8px;
@@ -189,33 +223,38 @@
 .modern-score-display {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.9rem 1.3rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 3px solid var(--primary-color);
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(8, 145, 178, 0.15);
+  min-width: 150px;
+  overflow: hidden;
 }
 
-.score-number {
-  font-size: 1.75rem;
+.modern-score-display .score-number {
+  font-size: 1.75rem !important;
   font-weight: 800;
   color: #64748b;
-  min-width: 32px;
+  min-width: 45px;
   text-align: center;
   transition: all 0.3s ease;
+  line-height: 1;
 }
 
-.score-number.winning {
+.modern-score-display .score-number.winning {
+  font-size: 2.15rem !important;
   color: var(--secondary-color);
-  font-size: 2rem;
   text-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
 }
 
-.score-separator {
+.modern-score-display .score-separator {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--primary-color);
+  line-height: 1;
 }
 
 /* Winner Badge */
@@ -274,15 +313,18 @@
   }
 
   .modern-score-display {
-    padding: 0.5rem 0.75rem;
+    padding: 0.7rem 1rem;
+    min-width: 120px;
+    gap: 0.5rem;
   }
 
-  .score-number {
-    font-size: 1.5rem;
+  .modern-score-display .score-number {
+    font-size: 1.5rem !important;
+    min-width: 38px;
   }
 
-  .score-number.winning {
-    font-size: 1.75rem;
+  .modern-score-display .score-number.winning {
+    font-size: 1.75rem !important;
   }
 
   .modern-team {

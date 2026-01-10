@@ -19,7 +19,6 @@ const ModalPartidos = ({
   onMatchClick,
   currentPage,
   totalPages,
-  totalMatches,
   onPageChange
 }: ModalPartidosProps) => {
   if (!isOpen) return null;
@@ -37,9 +36,6 @@ const ModalPartidos = ({
             <p className="empty-message">No hay partidos registrados aún.</p>
           ) : (
             <>
-              <div className="pagination-info">
-                <span>Mostrando {matches.length} de {totalMatches} partidos</span>
-              </div>
               <div className="matches-grid">
                 {matches.map((match) => (
                   <MatchCard 

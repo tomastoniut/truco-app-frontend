@@ -12,7 +12,7 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
   const getStatusSeverity = (status: string) => {
     const statusLower = status.toLowerCase().replace(/\s+/g, '_');
     switch (statusLower) {
-      case 'finalizado':
+      case 'completado':
         return 'success';
       case 'en_progreso':
       case 'en.progreso':
@@ -37,10 +37,14 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
   const hasScore = match.scoreLocalTeam !== null && match.scoreVisitorTeam !== null;
   const isLocalWinning = match.scoreLocalTeam! > match.scoreVisitorTeam!;
   const isVisitorWinning = match.scoreVisitorTeam! > match.scoreLocalTeam!;
+  const isMatchCompleted = match.stateName.toLowerCase() === 'finalizado' || 
+                           match.stateName.toLowerCase() === 'completado';
+  const isMatchCanceled = match.stateName.toLowerCase() === 'cancelado' || match.stateId === 4;
+  const showTrophy = isMatchCompleted && hasScore;
 
   return (
     <Card 
-      className="modern-match-card" 
+      className={`modern-match-card ${isMatchCanceled ? 'canceled' : ''} ${isMatchCompleted ? 'completed' : ''}`}
       onClick={() => onClick(match)}
     >
       {/* Header con fecha y estado */}
@@ -56,17 +60,10 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
         />
       </div>
 
-      {/* Torneo */}
-      <div className="modern-match-tournament">
-        <i className="pi pi-trophy" />
-        <span>{match.tournamentName}</span>
-      </div>
-
       {/* Equipos y Score */}
       <div className="modern-match-teams">
         {/* Equipo Local */}
-        <div className={`modern-team ${hasScore && isLocalWinning ? 'team-winning' : ''}`}>
-          <span className="modern-team-label">Local</span>
+        <div className={`modern-team ${showTrophy && isLocalWinning ? 'team-completed-winner' : ''}`}>
           <span className="modern-team-name">{match.localTeamName}</span>
         </div>
 
@@ -90,19 +87,11 @@ const MatchCard = ({ match, onClick }: MatchCardProps) => {
         </div>
 
         {/* Equipo Visitante */}
-        <div className={`modern-team ${hasScore && isVisitorWinning ? 'team-winning' : ''}`}>
-          <span className="modern-team-label">Visitante</span>
+        <div className={`modern-team ${showTrophy && isVisitorWinning ? 'team-completed-winner' : ''}`}>
           <span className="modern-team-name">{match.visitorTeamName}</span>
         </div>
       </div>
 
-      {/* Ganador */}
-      {match.winnerTeamName && (
-        <div className="modern-match-winner">
-          <i className="pi pi-crown" />
-          <span>Ganador: <strong>{match.winnerTeamName}</strong></span>
-        </div>
-      )}
     </Card>
   );
 };

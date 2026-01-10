@@ -1,0 +1,388 @@
+/* ================================
+   MODAL HISTORIAL PUNTOS - UX/UI PRO
+   ================================ */
+
+/* Dialog Customization */
+.modern-history-modal .p-dialog {
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(8, 145, 178, 0.2);
+}
+
+.modern-history-modal .p-dialog-header {
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  border-radius: 20px 20px 0 0;
+  border-bottom: none;
+}
+
+/* Close Button - Always White */
+.modern-history-modal .p-dialog-header-close {
+  color: white !important;
+}
+
+.modern-history-modal .p-dialog-header-close:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+}
+
+.modern-history-modal .p-dialog-header-close:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.3) !important;
+}
+
+.modern-history-modal .p-dialog-content {
+  padding: 2rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Header */
+.history-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.history-modal-header i {
+  font-size: 1.75rem;
+}
+
+/* Empty State */
+.empty-history {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.empty-history i {
+  font-size: 4rem;
+  color: var(--primary-light);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-history p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.empty-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+/* Timeline Container */
+.history-timeline-container {
+  padding: 1rem 0;
+}
+
+/* Custom Timeline Styles */
+.custom-timeline .p-timeline-event-opposite {
+  display: none;
+}
+
+.custom-timeline .p-timeline-event-content {
+  padding: 0 0 2rem 1.5rem;
+}
+
+.custom-timeline .p-timeline-event-separator {
+  position: relative;
+}
+
+/* Timeline Marker */
+.timeline-marker {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.2);
+  transition: all 0.3s ease;
+}
+
+.timeline-marker.current {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-color: var(--warning-color);
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.timeline-marker i {
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+
+.timeline-marker.current i {
+  color: white;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+  }
+}
+
+/* Timeline Connector Line */
+.custom-timeline .p-timeline-event-connector {
+  background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+  width: 3px;
+}
+
+.custom-timeline .p-timeline-event:last-child .p-timeline-event-connector {
+  display: none;
+}
+
+/* History Card */
+.history-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.history-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 4px 16px rgba(8, 145, 178, 0.12);
+  transform: translateX(4px);
+}
+
+.history-card.current {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: var(--warning-color);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+}
+
+.history-card.current:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
+}
+
+/* History Card Header */
+.history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--bg-tertiary);
+}
+
+.history-card.current .history-card-header {
+  border-bottom-color: rgba(245, 158, 11, 0.2);
+}
+
+.history-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.history-card.current .history-time {
+  color: #78350f;
+}
+
+.history-time i {
+  color: var(--primary-color);
+  font-size: 1rem;
+}
+
+.history-card.current .history-time i {
+  color: var(--warning-color);
+}
+
+.current-badge {
+  font-size: 0.625rem !important;
+  font-weight: 800 !important;
+  background: var(--warning-color) !important;
+  color: white !important;
+  padding: 0.25rem 0.625rem !important;
+}
+
+/* History Scores Container */
+.history-scores-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Team Score Item */
+.team-score-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+  border-radius: 10px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.team-score-item.local {
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.team-score-item.visitor {
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.history-card.current .team-score-item {
+  background: white;
+}
+
+.team-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-card.current .team-label {
+  color: #78350f;
+}
+
+.score-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  line-height: 1;
+}
+
+.history-card.current .score-value {
+  color: var(--warning-color);
+}
+
+/* Score VS */
+.score-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 800;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(8, 145, 178, 0.2);
+}
+
+.history-card.current .score-vs {
+  background: var(--warning-color);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+/* Restore Button */
+.restore-button {
+  width: 100%;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 3px 10px rgba(8, 145, 178, 0.25) !important;
+}
+
+.restore-button:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(8, 145, 178, 0.35) !important;
+}
+
+.restore-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(8, 145, 178, 0.2) !important;
+}
+
+.restore-button .p-button-icon {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+}
+
+/* Scrollbar Styling */
+.modern-history-modal .p-dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modern-history-modal .p-dialog-content::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+}
+
+.modern-history-modal .p-dialog-content::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 10px;
+}
+
+.modern-history-modal .p-dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .modern-history-modal .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  .history-card {
+    padding: 1rem;
+  }
+
+  .history-scores-container {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .score-vs {
+    transform: rotate(90deg);
+    margin: -0.5rem 0;
+  }
+
+  .team-score-item {
+    padding: 0.75rem;
+  }
+
+  .score-value {
+    font-size: 1.5rem;
+  }
+
+  .custom-timeline .p-timeline-event-content {
+    padding: 0 0 1.5rem 1rem;
+  }
+
+  .timeline-marker {
+    width: 32px;
+    height: 32px;
+  }
+
+  .timeline-marker i {
+    font-size: 0.875rem;
+  }
+}
