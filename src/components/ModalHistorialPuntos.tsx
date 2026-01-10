@@ -1,7 +1,6 @@
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { Timeline } from 'primereact/timeline';
-import { Badge } from 'primereact/badge';
 import { type Match } from '../types';
 import './ModalHistorialPuntos.css';
 
