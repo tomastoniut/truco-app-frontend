@@ -3,7 +3,6 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { InputSwitch } from 'primereact/inputswitch';
-import { Divider } from 'primereact/divider';
 import { type Player } from '../types';
 import './ModalCreateJugador.css';
 
@@ -105,8 +104,6 @@ const ModalCreateJugador = ({
           </div>
         </form>
       </div>
-
-      <Divider />
 
       {/* Lista de jugadores */}
       <div className="jugadores-lista-section">
