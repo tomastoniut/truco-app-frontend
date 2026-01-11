@@ -175,6 +175,7 @@ const ModalScoreMatch = ({
         onHide={onClose}
         header={headerContent}
         className="modern-score-modal"
+        maskClassName="modern-score-modal"
         style={{ width: '100vw', maxWidth: '100vw', height: '100vh' }}
         modal
         draggable={false}

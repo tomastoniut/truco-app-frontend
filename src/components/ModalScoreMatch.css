@@ -2,12 +2,25 @@
    MODAL SCORE MATCH - COMPACT FULLSCREEN
    ================================ */
 
+/* Dialog Mask - Remove padding */
+.p-dialog-mask.modern-score-modal {
+  padding: 0 !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
 /* Dialog Customization - Fullscreen */
 .modern-score-modal .p-dialog {
-  border-radius: 0;
-  box-shadow: none;
-  margin: 0;
-  height: 100%;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  height: 100vh !important;
+  width: 100vw !important;
+  max-height: 100vh !important;
+  max-width: 100vw !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  position: fixed !important;
 }
 
 .modern-score-modal .p-dialog-header {
